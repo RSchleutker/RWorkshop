@@ -1,0 +1,54 @@
+---
+title: "README"
+author: "Raphael Schleutker"
+date: "29 November 2018"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_theme$set("print")
+```
+
+# Overview
+
+This is a workshop for scientists from any kind of biological field. The intent of this workshop is to provide a solid introduction to data science (with R). This includes the organisation of projects, good practise for storing data and the manipulation and analysis of data using the programmging language R.
+
+# Outline
+
+* Seminar One
+    - Organising projects
+    - Introduction
+* Seminar Two
+    - Primitive data structures
+    - Assignments
+* Seminar Three
+    - Non-primitive data structures
+    - Using functions
+    - Doing basic math
+* Seminar Four
+    - Data I/O
+    - Text files
+    - Databases
+* Seminar Five
+    - Working with data frames
+* Seminar Six
+    - Graphics I
+* Seminar Seven
+    - Control structures
+* Seminar Eight
+    - Working with strings
+    - Regular expressions
+* Seminar Nine
+    - Writing own functions
+* Seminar Ten
+    - Graphics II
+
+```{r}
+
+```
+

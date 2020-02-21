@@ -1,0 +1,9 @@
+*.aux
+*.bcf
+*.log
+*.run.xml
+*.sty
+*.nav
+*.snm
+*.tex
+*.vrb
