@@ -27,7 +27,7 @@
 \usepackage{dirtree}
 
 \title{Data Science with R}
-\subtitle{Part II: Primitive Data Structures and Assignments}
+\subtitle{Part II: Assignments and Primitive Data Structures}
 % \date{\today}
 \date{February 28, 2020}
 \author{Raphael Schleutker}
@@ -91,40 +91,6 @@ theme_set(theme_bw(base_size = 8))
   \setbeamertemplate{section in toc}[sections numbered]
   \tableofcontents[hideallsubsections]
 \end{frame}
-
-
-
-% *****************************************************************************
-% ORGANIZATIONAL STUFF
-% *****************************************************************************
-
-\section{Organizational Stuff}
-% *****************************************************************************
-
-\begin{frame}[fragile]{Contents of this workshop}
-	
-	\begin{enumerate}
-		\item Introduction
-		\item Primitive data structures and assignments
-		\item How to get help and how to structure your code
-		\item Functions 101
-		\item Non-primitive data structures and functions
-		\item Subsetting
-		\item Data input/output
-		\item Working with data frames
-		\item Graphics I
-		\item Control structures
-		\item Working with text information
-		\item Writing own functions
-		\item Graphics II
-		\item Communicating results and outlook
-		\item (Celebration?)
-	\end{enumerate}
-	
-\end{frame}
-
-
-% =============================================================================
 
 
 
@@ -220,6 +186,22 @@ theme_set(theme_bw(base_size = 8))
 % =============================================================================
 
 
+\begin{frame}[fragile]{R as a Calculator}
+
+	What about some experiments?
+	
+	<<calculator_7>>=
+	1 / 0
+	0 / 0
+	1 / Inf
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
 \begin{frame}[fragile]{R as a Calculator -- Summary}
 	
 	{\center
@@ -235,6 +217,7 @@ theme_set(theme_bw(base_size = 8))
 	Square root					&	\texttt{sqrt()}	\\
 	Rounding					&	\texttt{round(), floor(), ceiling()}	\\
 	Logarithm					&	\texttt{log(), log10(), log2(), exp()}	\\
+	Sum, Product				&	\texttt{sum(), prod()}	\\
 	\bottomrule
 	\end{tabular}
 	}
@@ -244,7 +227,7 @@ theme_set(theme_bw(base_size = 8))
 	
 	R does'nt provide functions for everything. Sometimes, you need a basic mathematical knowledge to get the desired result, e.g. $\sqrt[3]{8} = 8^{\frac{1}{3}}$:
 	
-	<<calculator_7>>=
+	<<calculator_8>>=
 	8^(1/3)
 	@
 
@@ -545,7 +528,7 @@ theme_set(theme_bw(base_size = 8))
 	a <- "Hello World"
 	@
 	
-	Characters are not numeric, even if it consists if digit characters only.
+	Characters are not numeric, even if they consist of digit characters only.
 	
 	<<character_2>>=
 	"1" + "2"
