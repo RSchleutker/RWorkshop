@@ -7,3 +7,5 @@
 *.snm
 *.tex
 *.vrb
+*.toc
+*.out

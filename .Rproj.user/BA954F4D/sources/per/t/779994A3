@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1544376833237.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "779994A3",
+    "lastKnownWriteTime" : 28429397856747621,
+    "last_content_update" : 1544376833237,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "BD60F871",
+        "caption" : "airquality2",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=airquality2&cache_key=BD60F871",
+        "displayedObservations" : 153,
+        "environment" : "",
+        "object" : "airquality2",
+        "preview" : 0,
+        "totalObservations" : 153,
+        "variables" : 7
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
