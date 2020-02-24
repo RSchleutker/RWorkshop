@@ -1,4 +1,0 @@
-\beamer@sectionintoc {1}{Organizational Stuff}{3}{0}{1}
-\beamer@sectionintoc {2}{R as a Calculator}{5}{0}{2}
-\beamer@sectionintoc {3}{Assignments in R}{13}{0}{3}
-\beamer@sectionintoc {4}{Primitive Data Structures}{20}{0}{4}

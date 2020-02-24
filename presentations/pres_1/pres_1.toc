@@ -1,3 +1,0 @@
-\beamer@sectionintoc {1}{Organizational Stuff}{3}{0}{1}
-\beamer@sectionintoc {2}{About R}{15}{0}{2}
-\beamer@sectionintoc {3}{Project Organization 101}{26}{0}{3}

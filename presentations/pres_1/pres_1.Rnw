@@ -141,19 +141,19 @@ theme_set(theme_bw(base_size = 8))
 	\begin{enumerate}
 		\item Introduction
 		\item Primitive data structures and assignments
-		\item How to get help and how to structure your code
-		\item Functions 101
-		\item Non-primitive data structures and functions
+		\item Functions I and how to get help
+		\item Non-primitive data structures
 		\item Subsetting
 		\item Data input/output
 		\item Working with data frames
 		\item Graphics I
 		\item Control structures
 		\item Working with text information
-		\item Writing own functions
+		\item Functions II
 		\item Graphics II
-		\item Communicating results and outlook
-		\item (Celebration?)
+		\item Functions III / Scoping rules
+		\item Communicating results and outlook\\
+		\vdots
 	\end{enumerate}
 	
 \end{frame}

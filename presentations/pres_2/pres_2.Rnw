@@ -103,7 +103,7 @@ theme_set(theme_bw(base_size = 8))
 
 \begin{frame}[fragile]{R as a Calculator}
 
-	In the simplext case, R can be used just as a calculator.
+	In the simplest case, R can be used just as a calculator.
 	
 	<<calculator_1>>=
 	1 + 1
@@ -128,6 +128,10 @@ theme_set(theme_bw(base_size = 8))
 	@
 	
 	Does R also know rules like multiplication and division first, then addition and subtraction? \textbf{Try it!}
+	
+	<<calculator_2_1, eval=FALSE>>=
+	2 + 3 * 5
+	@
 
 \end{frame}
 
@@ -468,7 +472,7 @@ theme_set(theme_bw(base_size = 8))
 	Logical values are very useful for control structures later. They allow us to do different things for different data.
 	
 	<<logical_2>>=
-	a <- 58
+	a <- 58	# The result of a calculation that we don't know in advance.
 	
 	if(a == 58) {
 		b <- 4
@@ -569,7 +573,7 @@ theme_set(theme_bw(base_size = 8))
 
 \begin{frame}[fragile]{Primitive Data Structures -- How to work with Vectors}
 
-	At the beginning, its hard to get your head around vectors but they turn out to be quite handy.
+	At the beginning, it's hard to get your head around vectors but they turn out to be quite handy.
 	
 	<<vectors_1>>=
 	a <- c( 1, 2, 3, 4, 5)
