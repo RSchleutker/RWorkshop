@@ -30,10 +30,10 @@ numbers=noenddot]{scrartcl}				% Do not reserve whole page for the cover
 \clearscrheadfoot						% Clear header and footer to provide space for customized content
 
 \rehead[]{Data Science with R}
-\rohead[]{Exercise 1}
+\rohead[]{Solutions 1}
 \cehead[]{\today}
 \cohead[]{\today}
-\lehead[]{Exercise 1}
+\lehead[]{Solutions 1}
 \lohead[]{Data Science with R}
 
 \lefoot[]{\oldstylenums{\pagemark}}
