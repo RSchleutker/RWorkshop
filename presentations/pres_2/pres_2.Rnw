@@ -581,7 +581,7 @@ theme_set(theme_bw(base_size = 8))
 	a + c(1, 2)
 	@
 	
-	When doing math with vectors, shorter vectors are recycled.
+	The operation happens \emph{elementwise} and shorter vectors are \emph{recycled}.
 
 \end{frame}
 
