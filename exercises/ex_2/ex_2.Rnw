@@ -346,7 +346,7 @@ In this exercise you will have to use R as a calculator to determine the result 
 	\item $e^x$
 	\item $(x + y) \cdot 5$
 	\item $\frac{1}{x + y}$
-	\item $\sin (6 \cdot \pi )$
+	\item $\sin (1.5 \cdot \pi )$
 	\item $\sqrt[x]{64}$
 	\item $\left\lceil \frac{19}{x} \right\rceil$
 	\item $\left\lfloor \frac{-17}{y} \right\rfloor$ (once with the \texttt{floor} function, once without the \texttt{floor} function).
