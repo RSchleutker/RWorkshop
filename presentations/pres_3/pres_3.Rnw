@@ -29,7 +29,7 @@
 \title{Data Science with R}
 \subtitle{Part III: Functions and How to Get Help}
 % \date{\today}
-\date{February 28, 2020}
+\date{March 6, 2020}
 \author{Raphael Schleutker}
 \institute{\textit{There are only two industries that refer to their customers as users.}
 \hfill --- Edward Tufte}
@@ -121,10 +121,12 @@ Sys.setenv(LANG = "en")
 
 	This has two very important consequences:
 	
-	\begin{itemize}
+	\begin{itemize}[<+- | alert@+>]
 		\item Whenever something happens in R, may it be the computation of a value, an assignment, deletion of a variable, plotting graphics, etc., there is a function called. No exception.
 		\item Objects and functions are not mutually exclusive. Indeed, functions are objects as well (as they exist) and can be passed around like any other object. We will see in later presentations why this is useful.
 	\end{itemize}
+	
+	\pause
 
 	Given the central role of functions, it's worth studying them in some detail.
 
@@ -136,9 +138,9 @@ Sys.setenv(LANG = "en")
 
 \begin{frame}[fragile]{Function Basics}
 
-	The essentials parts of a function are
+	The essential parts of a function are
 	
-	\begin{itemize}
+	\begin{itemize}[<+- | alert@+>]
 		\item The name, by which the function is called.
 		\item The argument list that is passed to the function.
 		\item The function body, which is a series of expressions 'that do something'.
@@ -146,6 +148,20 @@ Sys.setenv(LANG = "en")
 	\end{itemize}
 	
 	For now, we only focus on how to use functions, i.e. we can ignore the function body until later.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Function Basics}
+
+	Functions in programming are quite similar to functions as we know them from math.
+	
+	{\Large $$ f(x) = 3\cdot x^2 $$}
+	
+	These functions also have a name ($f$), an argument list ($x$, but can be more of course), a function body ($3\cdot x^2$), and a return value (e.g. $12$ for $x=2$).
 
 \end{frame}
 
@@ -165,7 +181,7 @@ Sys.setenv(LANG = "en")
 		\item \texttt{3} is the return value.
 	\end{itemize}
 	
-	Note that the function is called (executed) by tailoring the function name with parantheses.
+	Note that the function is called (executed) by appending parentheses to the function name.
 
 \end{frame}
 
@@ -245,6 +261,10 @@ Sys.setenv(LANG = "en")
 	@
 	
 	If \texttt{na.rm} is set to \texttt{TRUE} all missing values will be removed before the mean is calculated. \texttt{trim} is the fraction of values removed from either end of the vector.
+	
+	\pause
+	
+	Some function arguments have default values. For instance, \texttt{na.rm} from \texttt{mean} is by default set to \texttt{FALSE}. \texttt{x} does not have a default value (wouldn't make any sense\dots ).
 
 \end{frame}
 
@@ -260,7 +280,7 @@ Sys.setenv(LANG = "en")
 	mean(c(6, 6, 5, 7, 9, 1, 3, NA, 2, 3, NA), 0.1, TRUE)
 	@
 	
-	The parameters are matched by position to each argument. It is convenient to not name the first one or two arguments (those that are known anways). However, leaving away the name of each argument soon becomes confusing.
+	The parameters are matched by position to each argument. It is convenient to \emph{not} name the first one or two arguments (those that are known anyways). However, leaving away the name of each argument soon becomes confusing.
 
 \end{frame}
 
@@ -284,11 +304,37 @@ Sys.setenv(LANG = "en")
 % =============================================================================
 
 
+\begin{frame}[fragile]{Function Basics -- Arguments}
+
+	Using the argument names allows us to vary the order of the arguments.
+	
+	<<function_9>>=
+	mean(na.rm = TRUE, x = c(6, 6, 5, 7, 9, 1, 3, NA, 2, 3, NA))
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Function Basics -- Arguments}
+
+	A very special argument that you might see from time to time is \texttt{\dots}. If a function has a \texttt{\dots} argument, all arguments that you hand over to the function and that do not match any existing argument name go into \texttt{\dots}. This is useful for passing through arguments to downstream functions
+	
+	This seems very abstract for the moment but as soon as we will start to write own functions you will see how this is useful.
+
+\end{frame}
+
+
+% =============================================================================
+
+
 \begin{frame}[fragile]{Function Basics -- Return Values}
 
 	For the case of \texttt{mean} the return value is obviously a numeric vector of length \texttt{1}. This return value could be assigned to a variable as we have seen. Sometimes, it seems as if there is no return value.
 	
-	<<function_9, fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	<<function_10, fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
 	a <- plot(1:10)
 	@
 	
@@ -301,12 +347,14 @@ Sys.setenv(LANG = "en")
 
 
 \begin{frame}[fragile]{Function Basics -- Return Values}
+
+	Let's see!
 	
-	<<function_10>>=
+	<<function_11>>=
 	a
 	@
 	
-	The return value is \texttt{NULL} which is a very special object that represents a non-existing value. Do not confuse this with a missing value \texttt{NA}. Missing values are existent. We just don't know it. \texttt{NULL} objects do not exist. There is no storage space reserved for a variable holding \texttt{NULL} and thus there is no address for \texttt{NULL}.
+	The return value is \texttt{NULL} which is a very special object that represents a non-existing value. Do not confuse this with a missing value \texttt{NA}. Missing values are existent. We just don't know them. \texttt{NULL} objects do not exist. There is no storage space reserved for a variable holding \texttt{NULL} and thus there is no address for \texttt{NULL}.
 
 \end{frame}
 
@@ -316,12 +364,14 @@ Sys.setenv(LANG = "en")
 
 \begin{frame}[fragile]{Function Basics -- Infix Functions}
 
-	We have learned above that a function is called by preceding the function name with parantheses. So what about the assignment operator or math operators?
+	We have learned above that a function is called by adding parentheses to the function name. So what about the assignment operator or math operators?
 	
-	<<function_11>>=
+	<<function_12>>=
 	a <- c(1, 2, 3)
 	a + 2
 	@
+	
+	\pause
 	
 	These are special functions called infix function (as they are in between their arguments) in comparison to prefix functions.
 
@@ -333,9 +383,9 @@ Sys.setenv(LANG = "en")
 
 \begin{frame}[fragile]{Function Basics -- Infix Functions}
 
-	Every infix function is also a prefix function and can be called as such using backticks.
+	Every infix function is also a prefix function and can be called as such using \emph{backticks} or \emph{quotation-marks}.
 	
-	<<function_12>>=
+	<<function_13>>=
 	`<-`(b, c(9, 8, 7))
 	b
 	`+`(b, 4)
@@ -415,8 +465,8 @@ Sys.setenv(LANG = "en")
 		\item First comes a header with a brief description what the functions does.
 		\item \emph{(Usage)}~~How do you call the function. Here you also see the default values for arguments.
 		\item \emph{(Arguments)}~~A description about each argument, i.e. what values does an argument take and what does it do.
-		\item \emph{(Details)}~~A more detailed description of what the function does, sometimes how it does it, and more detailed explanations about the argument if necessary.
-		\item \emph{(Value)}~~The return value of the functions. This is very important cause often you will use the return value of one function as input for another function. This way you can make sure that both have the same structure.
+		\item \emph{(Details)}~~A more detailed description of what the function does, sometimes how it does it, and more detailed explanations about the arguments if necessary.
+		\item \emph{(Value)}~~The return value of the functions. This is very important cause often you will use the return value of one function as input for another function. This way you can check that both have the same structure.
 		\item References and related functions.
 		\item \emph{(Examples)}~~Some use cases and examples.
 	\end{itemize}
