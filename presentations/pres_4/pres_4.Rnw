@@ -1,0 +1,552 @@
+\documentclass[10pt]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage[utf8]{inputenc}				% Unicode transformation format für Input
+\usepackage[T1]{fontenc}				% Zeichensatzkodierung
+\usepackage{lmodern}
+\usepackage{upgreek}					% Providing non-emphasized greek letters
+\usepackage{textcomp}					% Providing special characters 
+%\usepackage[english]{babel}				% Setting 'english' as the documents language
+\usepackage{csquotes}
+
+\usepackage{ulem}
+
+\usepackage{fontspec}
+\usepackage{fontawesome}
+
+\metroset{block=fill}
+
+\usepackage{dirtree}
+
+\title{Data Science with R}
+\subtitle{Part IV: Non-primitive Data Structures}
+% \date{\today}
+\date{March 13, 2020}
+\author{Raphael Schleutker}
+\institute{\textit{Programming today is a race between software engineers striving to build bigger and better idiot-proof programs, and the Universe trying to produce bigger and better idiots. So far, the Universe is winning.}
+\hfill --- Rick Cook}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\usepackage{hyperref}
+
+\begin{document}
+
+%!Rnw weave = knitr
+%\SweaveOpts{concordance=TRUE}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+options(formatR.arrow = TRUE, width = 50, scipen=999)
+opts_chunk$set(echo = TRUE,
+               message = FALSE,
+               warning = FALSE,
+               fig.path = 'figures/graphics-',
+               cache.path = 'cache/graphics-',
+               fig.align = 'center',
+               dev = 'pdf',
+               fig.show = 'hold',
+               par = FALSE,
+               cache = FALSE,
+               size = 'small',
+               comment = '#')
+
+opts_knit$set(self.contained=FALSE)
+
+knit_hooks$set(par = function(before, options, envir) {
+  if (before && options$fig.show!='none') {
+    par(mar = c(4,4,.1,.1),
+        cex.lab = .95,
+        cex.axis = .9,
+        mgp = c(2,.7,0),
+        tcl = -.3)
+  }
+}, crop=hook_pdfcrop)
+
+Sys.setenv(LANG = "en")
+@
+
+<<figure_settings, echo=FALSE>>=
+
+@
+
+
+
+% *****************************************************************************
+% TITLEPAGE
+% *****************************************************************************
+
+\maketitle
+
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+
+% *****************************************************************************
+% A basic data model
+% *****************************************************************************
+
+\section{A basic data model}
+% *****************************************************************************
+
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	Let us create a very simple example. We want to know whether tSJ in a wildtypic background have more Anakonda than tSJ in an M6 mutant background. For this, we want to measure the fluorescence intensity of endogenously tagged Anakonda in embryos of two different genotypes. To make the result a little bit more robust, we also measure at different developmental stages. 
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	For the beginning, let us look at only one single embryo. This embryo has many properties.
+	
+	\begin{itemize}
+		\item The time it was laid (a date and time value).
+		\item The temperature, at which it was laid (numerical).
+		\item Its size (numerical).
+		\item The developmental stage (ordinal).
+		\item The color (nominal).
+		\item The number of cells the embryo consist of (numerical).
+		\item etc.
+	\end{itemize}
+	
+	Basically, we could measure thousands of different aspects.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	Usually, we are only interested in a few aspects. For example, we are interested in the intensity of GFP tagged Anakonda at tSJ in different genotypes and at different stages. Then, we measure the following things:
+	
+	\begin{itemize}
+		\item The genotype of the embryo.
+		\item The developmental stage of the embryo.
+		\item The fluorescence intensity at tSJ.
+	\end{itemize}
+	
+	One might be tempted to view the first two properties as qualitatively different from the third one as they are only needed to put the fluorescence intensity into a context and as we do not really measure them but actually know them in advance. However, for our data model they are not qualitatively different. They are all properties of the embryo.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	We could put all these values together like the following:
+	
+	$$ \left( \text{Genotype},~\text{Stage},~\text{Intensity} \right) $$
+	
+	We call this a tuple. A tuple has two characteristics that are important for us
+	
+	\begin{itemize}
+		\item A tuple is ordered. This means that the genotype is always at the first position, the stage is always at the second position and the fluorescence intensity is always at the third position.
+		\item The elements of a tuple can have different scales (types).
+	\end{itemize}
+	
+	One tuple makes up one observation, i.e. an observation always consists of all properties we have measured at one experimental unit (the embryo).
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	Usually, we are measuring more than one experimental unit. We measure in total $n$ embryos. In this case we get $n$ tuples:
+	
+	$$ \left( \text{Genotype}_1,~\text{Stage}_1,~\text{Intensity}_1 \right) $$
+	$$ \left( \text{Genotype}_2,~\text{Stage}_2,~\text{Intensity}_2 \right) $$
+	$$ \vdots $$
+	$$ \left( \text{Genotype}_n,~\text{Stage}_n,~\text{Intensity}_n \right) $$
+	
+	The index refers to the experimental unit, not the value. So $\text{Stage}_1$ and $\text{Stage}_2$ might have the same value if the two corresponding embryos have the same stage.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	Since tuples are ordered, we can state that the $i$-th element of each tuple has the same scale (numerical, categorical, \dots ). We know that a vector always has one type only. This could bring us to the following idea:
+	
+	For each measured property we create a vector of length $n$. The $i$-th element of this vector is than the value we measured from the $i$-th experimental unit.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	$$ \left( \text{Genotype}_1~,~\text{Stage}_1~,~\text{Intensity}_1 \right) $$
+	$$ \left( \text{Genotype}_2~,~\text{Stage}_2~,~\text{Intensity}_2 \right) $$
+	$$ \vdots $$
+	$$ \left( \text{Genotype}_n~,~\text{Stage}_n~,~\text{Intensity}_n \right) $$
+	
+	This becomes then
+	
+	\begin{align*}
+	\text{Genotype} &= c( \text{Genotype}_1~,~\text{Genotype}_2~,~\dots~,~\text{Genotype}_n )	\\
+	\text{Stage} &= c( \text{Stage}_1~,~\text{Stage}_2~,~\dots~,~\text{Stage}_n )	\\
+	\text{Intensity} &= c( \text{Intensity}_1~,~\text{Intensity}_2~,~\dots~,~\text{Intensity}_n )
+	\end{align*}
+	
+	We can view these now as vectors and we can reconstruct one observation by taking the $i$-th element from each vector.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	
+	From the previous thoughts we can extract some characteristics.
+	
+	\begin{itemize}
+		\item An observation tuple always has the same length. This length is the number of properties we are measuring at one experimental unit. An observation with a different length is not a valid observation for our experiment.
+		\item Each vector has the same length. If we measure $n$ embryos, all vectors have to have length $n$, even if we have missing values (in this case we insert \texttt{NA}).
+		\item All values in one vector have the same scale. The genotype is always categorical (nominal to be more precise), the stage is always ordinal.
+		\item Each element in each vector is atomic. It can not be further disassembled (we treat dates and times as atomic even though we could disassemble a date into day, month and year).
+	\end{itemize}
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model}
+
+	
+	This can be transferred to tables.
+	
+	\begin{itemize}
+		\item Each row of a table is one observation.
+		\item Each column is one measured property / variable.
+		\item One table only holds data for one experiment (including repeats, which have to be indicated by a further column.
+	\end{itemize}
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{A basic data model -- Bad examples}
+
+	
+	R knows vectors which are perfectly suited for holding the measurements of one property, e.g. the fluorescence intensity. We can create several vectors to hold all the data from our experiment. This works theoretically but it would be more convenient to have a data structure that holds all these information and to which we can refer with a single variable.
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% Lists
+% *****************************************************************************
+
+\section{Lists}
+% *****************************************************************************
+
+\begin{frame}[fragile]{Lists}
+
+	Lists are the second data structure in R. We can think of lists as containers, in which we store all the information we need. Lists can hold all kinds of objects.
+	
+	\begin{itemize}
+		\item Vectors of different types.
+		\item Functions.
+		\item Other lists.
+	\end{itemize}
+
+	We can even mix all these things in one list.
+	
+	<<>>=
+	a <- 1:10
+	
+	l1 <- list(a)
+	
+	l2 <- list(a, l1, mean)
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Lists}
+
+	We can use the \texttt{str} function to get an idea about the \emph{str}ucture of a list.
+	
+	<<>>=
+	str(l1)
+	str(l2)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Lists}
+
+	Since lists can hold all kind of data they are often used as the return values for functions with complicated output. For instance the return value of a t-test in R is a list that holds the test statistic, the degrees of freedom of the associated t distribution, the p value, the confidence interval, etc.
+	
+	<<>>=
+	l3 <- t.test(
+		x = rnorm(100, mean = 1),
+		mu = 0
+	)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Lists}
+
+	
+	<<size='footnotesize'>>=
+	str(l3)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Lists}
+
+	
+	We can give elements of lists names to make more obvious what that element is.
+	
+	<<size='footnotesize'>>=
+	data <- list(
+		Stage = c(14, 14, 14, 15, 15, 14, 15, 15),
+		Genotype = c("yw", "yw", "M6[W186*]", "M6[W186*]", "yw", "yw", "M6[W186*]", "M6[W186*]"),
+		Intensity = c(1.35, 0.36, 2.46, 0.03, 0.74, 1.49, 2.01, 3.21)
+	)
+	
+	str(data)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Lists}
+
+	
+	Such a list is already quite nice. Now we can refer to our data with a single variable name instead of having a single variable for each property. We also make sure that measurements that belong together are logically separated from data of other experiments.
+	
+	However, since lists give us so much freedom for its content it is easy to mess it up. We could store vectors of different lengths in a list or also stuff that doesn't belong to the data of our experiment.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% Data frames
+% *****************************************************************************
+
+\section{Data frames}
+% *****************************************************************************
+
+\begin{frame}[fragile]{Data frames}
+
+	To circumvent the previous problems R has a data structure called data frame. Each data frame is a list (but not every list is a data frame). Indeed, data frames are a special kind of list that restricts what we can store in it.
+	
+	\begin{itemize}
+		\item Each element of of the data frame is a list.
+		\item Each element has the same length.
+	\end{itemize}
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	<<size='footnotesize'>>=
+	data <- data.frame(
+		Stage = c(14, 14, 14, 15, 15, 14, 15, 15),
+		Genotype = c("yw", "yw", "M6[W186*]", "M6[W186*]", "yw", "yw", "M6[W186*]", "M6[W186*]"),
+		Intensity = c(1.35, 0.36, 2.46, 0.03, 0.74, 1.49, 2.01, 3.21)
+	)
+	
+	typeof(data)
+	str(data)
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	Using data frames changes the way how functions work on the list. For instance, \texttt{print} outputs the data frame in a table like fashion.
+	
+	<<>>=
+	data
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	Usually, data frames hold many more values and we are only interested in a rough idea. In this case, we can use \texttt{head} and \texttt{tail}
+	
+	<<>>=
+	head(data)
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	A really useful function for data frames is \texttt{summary}
+	
+	<<>>=
+	summary(data)
+	@
+	
+	Depending on the type of the column, it creates useful summary statistics.
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	Sometimes, we are only interested in subsets of data. We can filter data using \texttt{subset}
+	
+	<<>>=
+	subset(data, Stage == 14 & Intensity > 1)
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	We can split a data frame using \texttt{split}. This yields a list of data frames.
+	
+	<<>>=
+	splitted_data <- split(data, data$Genotype)
+	splitted_data
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	\texttt{unsplit} does the reverse.
+	
+	<<>>=
+	unsplit_data <- unsplit(splitted_data, data$Genotype)
+	unsplit_data
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Data frames}
+
+	\center
+	
+	\textbf{We can do lot of things with data frames and we will spend another lesson to see what and how.}
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\end{document}

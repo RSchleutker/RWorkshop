@@ -427,9 +427,9 @@ Sys.setenv(LANG = "en")
 	\begin{itemize}[<+- | alert@+>]
 		\item The functions usually have common names like \texttt{mean}, \texttt{median}, \texttt{strsplit}, etc.
 		\item Functions usually take arguments in the order you would expect them. The first argument of \texttt{mean} is of course the vector of which you'd like to know the mean.
-		\item Arguments that actually do the same in different functions have the same name. For instance, \texttt{mean}, \texttt{median}, \texttt{var} all have an argument \texttt{na.rm} that removes any missing values prior to any calculations.
+		\item Arguments that actually do the same in different functions have the same name. For instance, \texttt{mean}, \texttt{median}, \texttt{var} all have an argument \texttt{na.rm} that removes missing values prior to any calculations.
 		\item If you use an IDE you usually only need to remember the first letters as the IDE will auto-complete your input.
-		\item Google is a very good source for help but be cautious. Not every answer you find on the internet is a good one (even though it technically works).
+		\item Google is a very good source for help but be cautious. Not every answer you find on the internet is a good answer (even though it technically works).
 		\item You always can use the internal help system of R.
 	\end{itemize}
 

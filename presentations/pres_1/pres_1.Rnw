@@ -148,10 +148,12 @@ theme_set(theme_bw(base_size = 8))
 		\item Working with data frames
 		\item Graphics I
 		\item Control structures
-		\item Working with text information
 		\item Functions II
+		\item Functional programming
+		\item Dates, times, and categorical data
 		\item Graphics II
 		\item Functions III / Scoping rules
+		\item Functions IV / Object oriented programming
 		\item Communicating results and outlook\\
 		\vdots
 	\end{enumerate}
