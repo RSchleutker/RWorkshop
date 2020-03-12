@@ -340,6 +340,10 @@ Sys.setenv(LANG = "en")
 		mu = 0
 	)
 	@
+	
+	\begin{block}
+	When you run the t-test from above and print the result by simply entering \texttt{l3}, you will not see much of the list but rather a nicely formatted output. This is, because R knows that \texttt{l3} holds the result of a hypothesis test and formats the result human friendly instead of just showing the plain list. This does not affect the result. It is still a list with several elements.
+	\end{block}
 
 
 \end{frame}
@@ -411,7 +415,7 @@ Sys.setenv(LANG = "en")
 	To circumvent the previous problems R has a data structure called data frame. Each data frame is a list (but not every list is a data frame). Indeed, data frames are a special kind of list that restricts what we can store in it.
 	
 	\begin{itemize}
-		\item Each element of of the data frame is a list.
+		\item Each element of of the data frame is a vector.
 		\item Each element has the same length.
 	\end{itemize}
 	
@@ -540,7 +544,7 @@ Sys.setenv(LANG = "en")
 
 	\center
 	
-	\textbf{We can do lot of things with data frames and we will spend another lesson to see what and how.}
+	\textbf{We can do lots of things with data frames and we will spend another lesson to see what and how.}
 	
 
 \end{frame}
