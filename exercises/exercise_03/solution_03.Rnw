@@ -30,10 +30,10 @@ numbers=noenddot]{scrartcl}				% Do not reserve whole page for the cover
 \clearscrheadfoot						% Clear header and footer to provide space for customized content
 
 \rehead[]{Data Science with R}
-\rohead[]{Exercise 3}
+\rohead[]{Solutions 3}
 \cehead[]{\today}
 \cohead[]{\today}
-\lehead[]{Exercise 3}
+\lehead[]{Solutions 3}
 \lohead[]{Data Science with R}
 
 \lefoot[]{\oldstylenums{\pagemark}}
@@ -309,7 +309,7 @@ opts_chunk$set(echo = TRUE,
                fig.align = 'center',
                dev = 'pdf',
                fig.show = 'hold',
-               par = FALSE,
+               global.par = TRUE,
                cache = FALSE,
                size = 'small',
                comment = '#')
@@ -333,29 +333,57 @@ Sys.setenv(LANG = "en")
 library(ggplot2)
 
 theme_set(theme_bw(base_size = 8))
+par(mar = c(5.1, 4.1, 4.1, 2.1))
 @
-
 
 \section*{Exercise 1}
 
-Read the help for the \texttt{cumsum} function. What argument(s) does the function take? What does the function do with the argument? What is the return value (type, length, \dots )? What are the cumulative sums of all natural numbers up to \texttt{5}, \texttt{8}, and \texttt{12}. The help page for \texttt{cumsum} also covers related functions. What is the cumulative minimum of \Sexpr{set.seed(19); sample(10)}?
+The \texttt{cumsum} function calculates the cumulative sum. It has a single argument \texttt{x}, which has to be either numeric or can be coerced to numeric (like boolean values) and returns a numeric vector of the same length as the first argument \texttt{x}. The first element of the return value is the first element of \texttt{x}. The second element is the sum of the first and second element of \texttt{x}. The third element is the sum of the first, second, and third element of \texttt{x}, etc. The cumulative sum of the first 12 natural numbers is
+
+<<>>=
+cumsum(1:12)
+@
+
+From this, we can also extract the cumulative sums of all natural numbers $< 12$. The cumulative minimum of the given series of numbers is
+
+<<>>=
+cummin(c(10, 6, 3, 5, 2, 1, 8, 7, 4, 9))
+@
+
+Note that you have to create a vector with the values by using \texttt{c()}. You can not pass the values like the following
+
+<<>>=
+cummin(10, 6, 3, 5, 2, 1, 8, 7, 4, 9)
+@
+
+In this case we passed 10 vectors of length 1 to \texttt{cumsum}, which only takes one argument.
+
+If we are curious about what happens when be have special input, we can just test it (since R is interpreted). For instance, we could put an \texttt{NA} somewhere into the vector or sum up boolean values.
+
+<<>>=
+cummin(c(10, 6, 3, 5, 2, NA, 1, 8, 7, 4, 9))
+cumsum(c(TRUE, TRUE, FALSE, FALSE, TRUE))
+@
 
 
 \section*{Exercise 2}
 
-Create a variable \texttt{x} that holds 1000 standard normally distributed random numbers using the following code.
+The histogram can be created like to following. All arguments except \texttt{las} are explained on the help page for \texttt{hist}. Since \texttt{las} is not known to \texttt{hist} and \texttt{hist} has a \texttt{\dots} argument, \texttt{las = 1} goes into \texttt{\dots}. Everything that goes here will be passed to another function that sets the global parameters for graphical output. \texttt{las = 1} for instance makes all tick labels horizontal.
 
-<<>>=
+<<fig.width = 80/25, fig.height = 60/25, out.width = "80mm", out.height = "60mm", dev.args=list(pointsize=9)>>=
 x <- rnorm(1000)
+
+hist(
+	x = x,		# The first x is the argument name, the second x our vector.
+	freq = FALSE,	# This plots the density instead of the f requencies/counts.
+	xlab = "Standard normally distributed random numbers",
+	ylab = "Density",
+	main = "A Histogram of Random Numbers",
+	las = 1
+)
 @
 
-Plot a histogram of these values. For this, read the help page of the \texttt{hist} function. Make sure to plot the density, not the frequencies. Give the axes some meaningful labels and add a title to the plot.
-
-
-\section*{*Exercise 3}
-
-\emph{This exercise is for the upcoming lecture to prepare you for the content or to sensibilize you for something.}\\
-Data can be classified as either structured or unstructured. Structured data is everything with a defined structure like tables but also FASTA files and most other bioinformatic data types. Unstructured data is virtually everything else including texts, video, audio, etc. We are almost always working with structured data and most of the time this data can be tabulated. Try to find characteristics for nicely formatted tabular data. What should a column contain, what a row? What should a single cell contain? When would you put data not in the same table but split them across multiple tables?
+Please note, that you can spread the arguments over several lines to make the code more readable.
 
 
 \end{document}
