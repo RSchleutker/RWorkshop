@@ -1,0 +1,413 @@
+% Document settings, side mirror -----------------------------------------------
+
+\documentclass[a4paper,					% Paper format
+DIV=12,
+11pt,									% Font size
+% BCOR=8mm,								% Extra indent for binding correction
+headsepline,							% Line below header
+listof=totocnumbered,					% Numbering the Table of Content title
+onecolumn,								% Document with two columns
+%abstract=true,							% Showing Abstract title above the abstract
+captions=tableheading,
+titlepage=firstiscover,
+onesided,
+numbers=noenddot]{scrartcl}				% Do not reserve whole page for the cover
+
+% \unsettoc{toc}{onecolumn}				% Print table of contents in two columns
+
+\usepackage{setspace}					% Packages, which allows to set line spacing
+\onehalfspacing							% Lines are spaced 1.5-fold
+\setlength{\columnsep}{0.5cm}			% Space between columns in twocolumned document
+\setlength{\parindent}{0pt}
+
+\usepackage{cuted}						% Onecolumn contentnin twocolumned document
+
+
+% Header and footer settings of the document -----------------------------------
+
+\usepackage[automark]{scrlayer-scrpage}
+
+\clearscrheadfoot						% Clear header and footer to provide space for customized content
+
+\rehead[]{Data Science with R}
+\rohead[]{Solutions 4}
+\cehead[]{\today}
+\cohead[]{\today}
+\lehead[]{Solutions 4}
+\lohead[]{Data Science with R}
+
+\lefoot[]{\oldstylenums{\pagemark}}
+\refoot[]{\textsc{{\small Raphael Schleutker}}}
+\rofoot[]{\oldstylenums{\pagemark}}
+\lofoot[]{\textsc{{\small Raphael Schleutker}}}
+
+
+% Formation of the title page entries --------------------------------------------
+
+\setkomafont{titlehead}{\centering}	% Show title head in small emphazised letters, centered
+
+%\setkomafont{paragraph}{\normalfont\large\itshape}
+
+
+\usepackage{tikz}
+\usepackage{pgffor}
+\usetikzlibrary{intersections,
+decorations.pathmorphing,
+shadows}
+
+\tikzset{every picture/.style={/utils/exec={\sffamily}, text=black!80},
+font={\fontsize{10pt}{12}\selectfont},
+coord/.style={line width=.4mm, draw=black!80},
+line/.style={line width=.2mm, draw=black!70}}
+
+\usepackage{wrapfig}
+
+\usepackage{seqsplit}
+
+
+% Extra packages for language / characters, language settings --------------------
+
+\usepackage[utf8]{inputenc}				% Unicode transformation format für Input
+\usepackage[T1]{fontenc}				% Zeichensatzkodierung
+\usepackage{lmodern}
+\usepackage{upgreek}					% Providing non-emphasized greek letters
+\usepackage{textcomp}					% Providing special characters 
+\usepackage[english]{babel}				% Setting 'english' as the documents language
+\usepackage{csquotes}
+
+
+% Extra packages for math, special math characters etc., chemistry formulas -----------------
+
+\usepackage{mathtools}
+\usepackage{amssymb}					% Provides mathematical symbols
+\usepackage{amstext}					% Provides \text{...} command in math environments
+\usepackage{wasysym}					% Provides additional symbols like female, male, ...
+\usepackage{amsthm}
+\usepackage{thmtools}
+%\usepackage{txfonts}
+\usepackage{thm-restate}
+
+%\newcommand{\bmmax}{2}
+\usepackage{bm}
+
+\newcommand{\matr}[1]{\bm{#1}}
+\DeclareMathOperator*{\sums}{\sum\dots\sum}
+
+\declaretheoremstyle[
+bodyfont=\normalfont,
+notefont=\normalfont\itshape,
+spaceabove=12pt,
+spacebelow=12pt,
+postheadspace=9pt
+]{mystyle}
+
+\declaretheorem[name=Definition, numberwithin=section, style=mystyle]{definition}
+\declaretheorem[name=Satz, sibling=definition, style=mystyle]{theorem}
+\declaretheorem[name=Beispiel, sibling=definition, style=mystyle]{example}
+\declaretheorem[name=Korollar, sibling=definition, style=mystyle]{corollar}
+\declaretheorem[name=Folgerung, sibling=definition, style=mystyle]{implication}
+\declaretheorem[name=Bemerkung, sibling=definition, style=mystyle]{remark}
+\declaretheorem[name=Lemma, sibling=definition, style=mystyle]{lemma}
+\declaretheorem[name=Behauptung, sibling=definition, style=mystyle]{claim}
+
+\declaretheorem[
+  style=mystyle,
+  name=Beispiel \protect\continuation,
+  unnumbered,
+]{excont}
+
+\newcommand{\continuation}{}
+\newenvironment{continueexample}[2]
+ {\renewcommand{\continuation}{#1}\excont[#2]}
+ {\endexcont}
+%\declaretheorem[name=Beweis, numbered=no]{proof}
+%\declaretheorem[name=Beispiel, shaded={rulecolor=gray, rulewidth=1pt, bgcolor=white}]{example}
+
+\newcommand{\mse}{\mathrm{MSE}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Kov}{\mathrm{Kov}}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Exp}{\mathrm{Exp}}
+\newcommand{\Erl}{\mathrm{Erl}}
+
+
+% Defining units for use in text ------------------------------------------------------------
+
+\usepackage{siunitx}					% Package, which provides pssibility to easy use units in text
+
+\sisetup{
+output-decimal-marker = {,},			% Decimal parker is '.'
+separate-uncertainty = true,
+per-mode = symbol,						% 'per' is shown as a symbol (fraction like)
+list-final-separator = { und },			% Lists end with an ', and'
+list-pair-separator = { und },			% Lists with two entries use 'and' for separation
+range-phrase = { bis },					% Numbers in ranges are separated with 'to'
+exponent-product = \cdot				% Use dot as multiplication sign
+}
+
+
+% Extra packages for showing / including graphics -------------------------------------------
+
+\usepackage{graphicx}					% Package, which allows to include graphics
+
+
+% Extra packages for additonal functionalities (list of abbreviations, ...) ------------------
+
+\usepackage[printonlyused]{acronym}		% Abbreviations
+\usepackage[super]{nth}
+
+
+% Extra packages for table formatting --------------------------------------------------------
+
+\usepackage{booktabs}					% Providing better formatted lines for tables
+%\usepackage{array}						% 
+\usepackage{longtable}					% Allows to create multisided tables
+\usepackage{threeparttable}				% Special environment which provides table footnotes
+\usepackage{tabularx}					% Specify width of the tables independently of the content
+\usepackage{multirow}
+
+\usepackage{etoolbox}
+\AtBeginEnvironment{tabular}{\small}
+\AtBeginEnvironment{tabularx}{\small}
+\AtBeginEnvironment{tablenotes}{\footnotesize}
+
+
+
+% Extra packages for lists --------------------------------------------------------------------
+
+\usepackage{enumitem}					% Provides additonal bullets for lists
+\setitemize{itemsep=-3pt}
+\setenumerate{itemsep=-3pt}
+
+
+% Everything for references, citations, etc... ------------------------------------------------
+
+\usepackage[backend=biber,				% Use biber to compile the references
+natbib=true,							% Use natbib for scientific style
+citestyle=numeric-comp,					% Citation style in text
+bibstyle=numeric,						% Citation style in references
+uniquename=init,						% 
+sorting=none,							% Citations in the bibliography are sorted for appearance, not alphabetically
+maxcitenames=2,
+maxbibnames=5,
+giveninits=true]{biblatex}				% Show just initiales of first name
+
+\addbibresource{literature/literature.bib}	% Define path to the literature resource file
+
+\renewcommand{\bibfont}{\small}			% Reference font size
+
+\DeclareNameAlias{sortname}{last-first}							% Show last name first
+\DeclareNameAlias{default}{last-first}							% Show last name first
+\DeclareFieldFormat[article]{volume}{\mkbibbold{#1}}			% Show 'volume' in bold font
+\renewcommand*{\mkbibnamefamily}[1]{\textsc{#1}}				% Show last name in small caps
+\renewcommand*{\labelnamepunct}{\mkbibbold{\addcolon\space}}	% Show colon after authors and year instead of a dot
+
+\usepackage{xpatch}
+\xpretobibmacro{bbx:editor}{\mkbibbold\bgroup}{}{}
+\xapptobibmacro{bbx:editor}{\egroup}{}{}
+
+\DefineBibliographyStrings{english}{	% Define language for the bibliography
+andothers={\emph{et\ al\adddot}},		% Write "et al." instead of "and others"
+%pages={},								% Do not show 'pages' but just the site numbers
+in={}									% Do not show 'in' but only the journal name
+}
+
+\AtEveryBibitem{\clearfield{month}}		% Remove field 'month' from entries
+\AtEveryBibitem{\clearfield{issn}}		% Remove field 'issn' from entries
+%\AtEveryBibitem{\clearfield{number}}	% Remove field 'number' from entries (often misused for issue)
+\AtEveryBibitem{\clearfield{doi}}		% Remove field 'doi' from entries (link to paper is shown instead)
+
+\AtEveryBibitem{						% If enrty type is 'article' or 'Article', remove the field 'urldate'
+  \ifentrytype{article}{
+  }{
+    \clearfield{urldate}
+    \clearfield{eprint}
+  }
+  \ifentrytype{Article}{
+  }{
+    \clearfield{urldate}
+    \clearfield{eprint}
+  }
+  \ifkeyword{Review}{\tikz\filldraw[color=gray] (0,0) circle (2.5pt);}{}
+  \ifkeyword{Tool}{\tikz\filldraw[color=gray] (0,0) -- (6pt,0) -- (3pt,6pt);}{}
+}
+
+
+% Defining extra colours for use --------------------------------------------------------------
+
+\usepackage{xcolor}						% Package, which allows to define new colours
+
+\definecolor{textgray}{RGB}{101 101 101}
+\definecolor{darkwhite}{RGB}{252 252 252}
+\definecolor{darkgray}{RGB}{68 68 68}
+
+% Formatting captions ------------------------------------------------------------------------
+
+\usepackage{caption}									% Show single line caption like multiline caption
+\captionsetup{
+format=plain,
+belowskip=6pt,
+aboveskip=6pt}
+
+\renewcaptionname{english}{\figureautorefname}{\textsc{Figure}}	% 'Figure' is written in small caps when using autoref
+\renewcaptionname{english}{\tableautorefname}{\textsc{Table}}	% 'Table' is written in small caps when using autoref
+\addtokomafont{captionlabel}{\scshape}							% Writing 'Figure' and 'Table' in small caps
+\addtokomafont{captionlabel}{\small}							% Size of the caption label
+\addtokomafont{caption}{\small}									% Size of the caption
+
+\usepackage{subcaption}
+\captionsetup[subfigure]{labelfont=sc}
+\captionsetup[sub]{
+position=top,
+font=footnotesize,
+labelfont={sc},
+labelformat=parens,
+skip=3pt,
+singlelinecheck=false
+}
+
+\renewcommand\thesubfigure{\textsc{\alph{subfigure}}}	% Referenced subfigures are shown in small caps in the text
+\renewcommand\thesubtable{\textsc{\alph{subtable}}}		% Referenced subtables are shown in small caps in the text
+
+
+% Hyperref -----------------------------------------------------------------------------------
+
+\usepackage[colorlinks,
+linkcolor = textgray,
+citecolor = textgray,
+filecolor = textgray,
+urlcolor = textgray,
+bookmarks=true,
+bookmarksnumbered=true,
+]{hyperref}
+
+%\hypersetup{draft}
+
+\hypersetup{pdftitle={Statistik II},
+pdfauthor={Raphael Schleutker}}
+
+\usepackage{bookmark}
+
+\usepackage{blindtext}
+
+% ---------------------------------------------------------------------
+% ---------------------------------------------------------------------
+
+\begin{document}
+
+%!Rnw weave = knitr
+%\SweaveOpts{concordance=TRUE}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+options(formatR.arrow = TRUE, width = 50, scipen=999)
+opts_chunk$set(echo = TRUE,
+               message = FALSE,
+               warning = FALSE,
+               fig.path = 'figures/graphics-',
+               cache.path = 'cache/graphics-',
+               fig.align = 'center',
+               dev = 'pdf',
+               fig.show = 'hold',
+               global.par = TRUE,
+               cache = FALSE,
+               size = 'small',
+               comment = '#')
+
+opts_knit$set(self.contained=FALSE)
+
+knit_hooks$set(par = function(before, options, envir) {
+  if (before && options$fig.show!='none') {
+    par(mar = c(4,4,.1,.1),
+        cex.lab = .95,
+        cex.axis = .9,
+        mgp = c(2,.7,0),
+        tcl = -.3)
+  }
+}, crop=hook_pdfcrop)
+
+Sys.setenv(LANG = "en")
+@
+
+<<figure_settings, echo=FALSE>>=
+library(ggplot2)
+
+theme_set(theme_bw(base_size = 8))
+par(mar = c(5.1, 4.1, 4.1, 2.1))
+@
+
+\section*{Exercise 1}
+
+As pointed out in the presentation we can use \texttt{head()} and \texttt{tail()} for getting the first or last few rows of a data frame.
+
+<<>>=
+head(iris)
+tail(iris)
+@
+
+Using \texttt{summary()} gives us a simple summary for each of the columns.
+
+<<>>=
+summary(iris)
+@
+
+This gives summary statistics for all pooled observations. If we want to get statistics separately for each species, we have to split the data frame first. This yields a list of data frames.
+
+<<>>=
+split_iris <- split(iris, iris$Species)
+str(split_iris)
+@
+
+We can now compute summary statistics for each of the elements of the lists. As the hint points out, we can use double brackets to extract one element from a list.
+
+<<>>=
+head(split_iris[[1]])
+summary(split_iris[[1]])
+@
+
+We can do this for each of the elements in the list. I will skip the other two species. Interestingly, R still knows the other two species that are not present in subset (see at the summary for the \texttt{Species} column). Alternatively, we can use \texttt{subset} for computing the summary statistics for each species separately.
+
+<<>>=
+summary(subset(iris, Species == 'setosa'))
+@
+
+However, the latter way becomes tedious if the column by which we want to split the data frame has many categories. Splitting the data frame with \texttt{split} into a list of data frames has the advantage that the subsets are available as elements of a single list, which make them programatically accessible. For instance, we will see in a few weaks, how we can use functional programming to apply the \texttt{summary} function to each element of a list automatically. As a foretaste:
+
+<<>>=
+lapply(split_iris, summary)
+@
+
+What happens if we try to plot a data frame?
+
+<<fig.width = 150/25, fig.height = 120/25, out.width = "150mm", out.height = "120mm", dev.args=list(pointsize=9)>>=
+plot(iris)
+@
+
+This creates plots for each column combination. This can be very useful for a first exploratory analysis of the data set. For example, the width and length of petals are positively correlated while this is not so pronounced for sepals. Also the species differ perceptibly from each other (the plots on the bottom and right).
+
+
+\section*{Exercise 2}
+
+If we measure several tricellular vertices in one embryo then the observational unit is not any longer the embryo but a single vertex. In that case we have to measure additional properties to make sense out of the data, e.g. the embryo (we can simply number them) and the tissue if we measure in different tissues. So a good data frame would look like the one below.
+
+\begin{table}[h!]
+\begin{tabular}{llllll}
+\toprule
+Embryo	&	Stage	&	Genotype	&	Intensity enrichment	\\
+\midrule
+1		&	14		&	y w			&	1.24		\\
+1		&	14		&	y w			&	0.23		\\
+2		&	14		&	M6[W186*]	&	0.98		\\
+\vdots	&	\vdots	&	\vdots		&	\vdots		\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+So what was wrong with the data frames in the exercise? The first one was complete nonsense. Of course we can say in advance that we want to measure in three different embryos for each combination of stage and genotype. But this does not result in three properties for one observation. Actually, the way the data was noted down in the first example suggests that 1.24, 0.23, and 0.98 are all values measured in the very same embryo. This is of course impossible.
+
+The second table isn't any better. Several values are stored in one cell. There is not even a possibility to store a structure like this in a data frame in R (except using a string of course\dots ).
+
+The third table is a bit better except that two properties are stored in one column. This is not very handy since now we cannot split the data by one of the properties separately. At least we can fix this problem easily by splitting the column by the slash (we will learn soon how).
+
+
+\end{document}
