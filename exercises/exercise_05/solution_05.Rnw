@@ -30,10 +30,10 @@ numbers=noenddot]{scrartcl}				% Do not reserve whole page for the cover
 \clearscrheadfoot						% Clear header and footer to provide space for customized content
 
 \rehead[]{Data Science with R}
-\rohead[]{Exercise 6}
+\rohead[]{Solutions 5}
 \cehead[]{\today}
 \cohead[]{\today}
-\lehead[]{Exercise 6}
+\lehead[]{Solutions 5}
 \lohead[]{Data Science with R}
 
 \lefoot[]{\oldstylenums{\pagemark}}
@@ -63,8 +63,6 @@ line/.style={line width=.2mm, draw=black!70}}
 \usepackage{wrapfig}
 
 \usepackage{seqsplit}
-
-\usepackage{dirtree}
 
 
 % Extra packages for language / characters, language settings --------------------
@@ -311,9 +309,9 @@ opts_chunk$set(echo = TRUE,
                fig.align = 'center',
                dev = 'pdf',
                fig.show = 'hold',
-               par = FALSE,
+               global.par = TRUE,
                cache = FALSE,
-               size = 'small',
+               size = 'footnotesize',
                comment = '#')
 
 opts_knit$set(self.contained=FALSE)
@@ -335,74 +333,111 @@ Sys.setenv(LANG = "en")
 library(ggplot2)
 
 theme_set(theme_bw(base_size = 8))
+par(mar = c(5.1, 4.1, 4.1, 2.1))
 @
-
-
-\section*{Supplement 1}
-
-We have seen the main data types of R, i.e. logical values, integers, doubles, and characters. R has some other types that build up on top of these. For instance, R represents dates as the number of days since 1907-01-01 and datetimes as the number of seconds since then. For the corona data we will only work with dates to keep it simple and thus drop any information about the daytime. It is possible to create dates either from numeric values or from strings. The default time zone is UTC.
-
-<<>>=
-tomorrow <- as.Date(1, origin = "2020-03-27")
-newyear <- as.Date("2020-01-01")
-as.integer(tomorrow)
-@
-
-So since 1970-01-01 18349 days passed by. Cause dates are represented as integers we can do math with them:
-
-<<>>=
-tomorrow - newyear
-@
-
-R automatically considers leap years and even leap seconds. There are many useful functions to work with dates, e.g.
-
-<<>>=
-weekdays(newyear) # Language is system dependend.
-@
-
-Unfortunately, dates are often not in the standard format given by \texttt{YYYY-mm-dd}. But we can specify the format for R using special placeholders.
-
-<<>>=
-my_date <- "01/26/2015 07:24pm"
-as.Date(my_date, format = "%m/%d/%Y") # Time is ignored.
-@
-
-There are many letters with special meanings for declaring the proper format. Check the help page for \texttt{strptime}.
-
 
 \section*{Exercise 1}
 
-In this exercise we will start to develop our corona project. Make sure to create a project folder called \texttt{corona} with a file \texttt{analysis.R} and a subfolder \texttt{data} as mentioned on the last exercise sheet. In addition create subfolders \texttt{output} and \texttt{src} and subfolders in \texttt{data} called \texttt{raw} and \texttt{processed}. The folder structure should look like the following. Put the data for daily reports in the \texttt{raw} folder. The project folder should look like this:
+Let us first create the three vectors.
 
-\dirtree{%
-		.1 corona.
-		.2 data.
-		.3 raw.
-		.4 01-22-2020.csv.
-		.4 01-23-2020.csv.
-		.4 \vdots .
-		.3 processed.
-		.2 output.
-		.2 src.
-		.2 analysis.R.
-	}
+<<>>=
+x <- sample(100)
+y <- sample(100)
+z <- sample(letters, 100, replace = TRUE)
+@
 
-Now, we can start to work on our project. The code for the following should go to the \texttt{analysis.R} file.
-
-For the following exercises make sure to always use relative paths. The root is always your top-level project folder.
+Now we can start to extract elements from \texttt{x} according to the exercises.
 
 \begin{enumerate}[label=(\alph*)]
-	\item For now we will work with a single date. Import the data for March 18 into R. Make sure to not convert all strings to factors. Save the data to a variable called \texttt{data\_corona}.
-	\item Have a look on the data. Most columns should be clear. I guess longitude and latitude are the coordinates for presenting the numbers on a world map (but I don't know exactly).
-	\item Convert the datetimes in \texttt{Last.Update} to dates using \texttt{as.Date}.
-	\item Save the data frame as \texttt{processed\_data.csv} in the \texttt{processed} folder. Look on the help page for \texttt{write.csv} and set the proper argument accordingly to omit row names. Save it also as an excel file for your favorite journal.
+	\item We can extract every fifth value in two ways. Either by logical subsetting or by position.
+	<<>>=
+	x[c(TRUE, FALSE, FALSE, FALSE, FALSE)]
+	x[seq(1, 100, 5)]
+	@
+	\item We have seen in the lecture that we can omit elements by using negative position values.
+	<<>>=
+	x[-30:-10] # Create a sequence of values from -30 to -10.
+	@
+	\item The sequence is the cumulative sum of all values from 1 to 13. We can use this sequence to extract the elements from x.
+	<<>>=
+	cumsum(1:13)
+	x[cumsum(1:13)]
+	@
+	\item We have to use logical subsetting for this. The idea is to make a comparison, if \texttt{y} is smaller than \texttt{x}. Since such comparisons are done elementwise for two vectors we can use the resulting logical vector for answering the question.
+	<<>>=
+	x[y < x]
+	@
+	\item This is very much like the previous exercise. We have to create a logical vector. We can use \texttt{\%in\%} to check for every element in \texttt{z} if it is either \textbf{"c"}, \texttt{"r"}, or \texttt{"x"}.
+	<<>>=
+	x[z %in% c("c", "r", "x")]
+	@
+	\item Fort his exercise we have to use the \texttt{\&} (intersection) operator. We create two logical vectors (those from (d) and (e)) and connect them.
+	<<>>=
+	x[(y < x) & (z %in% c("c", "r", "x"))]
+	@
+	\item The same as in (f) but this time we have to use the \texttt{|} (union) operator.
+	<<>>=
+	x[(y < x) | (z %in% c("c", "r", "x"))]
+	@
+	\item The position of the largest element in \texttt{x} can be detected using \texttt{which.max}.
+	<<>>=
+	which.max(x)
+	@
 \end{enumerate}
 
+If you have trouble to comprehend the solutions I recommend that you dissect the solutions piece by piece. Take the expressions in the brackets and execute them alone. If they are assembled like in exercise (f) and (g) disassemble the expressions further. Also go through the lecture again and execute the examples. If you are not sure, what exactly happens, disassemble the examples. Try around yourself.
 
-\section*{*Exercise 2}
 
-\emph{This exercise is for the upcoming lecture to prepare you for the content or to sensibilize you for a certain aspect.}\\
-Sometimes we have more data then we can deal with or that we need to answer our specific question. In this project for instance we have data for different regions in one country. It is always a trade-off between how deeply we want to analyze our data and how complex the project will be. For this project for instance we will not consider each region separately but look at whole countries and we will ignore daytimes for the updates and only look at the date. This makes the analysis easier without loosing too much information.
+\section*{Exercise 2}
 
+We can not extract single elements cause there is no meaningful data structure this data could take. For example, the elements in the iris data set are of different types, so we can not put them in a single vector.
+
+<<>>=
+iris[5,4]
+iris[4,5]
+@
+
+A data frame is also not possible. A data frame is rectangular. What happens to the diagonal elements in the fifth row + fifth column and fourth row + fourth column? A list would theoretically be possible but the ordering of the elements would not be defined. This is too ambiguous for being a reliable tool in programming.
+
+In the following we have two possibilities to extract the desired information: Either using brackets or using \texttt{subset}. I will show you both ways for the first two problems. I think that after exercise 1 the solutions are more or less self-explanatory so I will omit further explanations. For using brackets you have to remember to put the comma!
+
+\begin{enumerate}[label=(\alph*)]
+	\item
+	<<>>=
+	subset(USArrests, Murder >= 10)
+	USArrests[USArrests$Murder >= 10,]
+	@
+	\item
+	<<>>=
+	subset(USArrests, Rape >= 20 & Rape <= 40)
+	USArrests[USArrests$Rape >= 20 & USArrests$Rape <= 40,]
+	@
+	\item
+	<<>>=
+	subset(USArrests, Murder >= 10 & Rape >= 20 & Rape <= 40)
+	@
+	\item This time, we have to get a vector. We can create a data frame with the subset of data and directly subset it again (which looks a bit odd). Or we can use the \texttt{drop} argument from \texttt{subset}. Setting it to \texttt{TRUE} removes the surrounding data frame if a single column is selected.
+	<<>>=
+	subset(USArrests, Assault > 200)$UrbanPop
+	subset(USArrests, Assault > 200, select = UrbanPop, drop = TRUE)
+	USArrests[USArrests$Assault > 200,][[3]] # UrbanPop is the third column.
+	@
+	Another very nice way is to construct an environment, in which we can refer to the column names directly (we will see in Part VII how this exactly works).
+	<<>>=
+	with(USArrests, UrbanPop[Assault > 200])
+	@
+\end{enumerate}
+
+Bonus exercise: As explained the \texttt{order} function returns positions that arranges its argument in ascending order.
+
+<<>>=
+order(USArrests$Assault)
+@
+
+This basically means that the 34. element in the Assault column is the smallest value, the 11. element is the second smallest and so on. So we can take these values for reordering the whole data frame. Please note, that this creates an ordered copy of the original data frame. It does not order the existing data frame in place!
+
+<<>>=
+USArrests[order(USArrests$Assault),]
+@
 
 \end{document}

@@ -325,6 +325,20 @@ Sys.setenv(LANG = "en")
 
 \begin{frame}[fragile]{Tabular text files}
 	
+	\begin{block}{\texttt{stringsAsFactors}}
+	One argument that you will often see when reading text files is \texttt{stringsAsFactors = FALSE}. Factors are the way R represents categorical variables. A factor is a special form of an integer vector where each integer has a name. By default, R converts all strings from text files into factors. This is often not what we want. So we will usually set this argument to \texttt{FALSE}.
+	
+	With the release of R 4.0.0 the default behavior will change and strings will not longer be converted to factors automatically.
+	\end{block}
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Tabular text files}
+	
 	<<size='footnotesize'>>=
 	str(our_data)
 	@

@@ -30,10 +30,10 @@ numbers=noenddot]{scrartcl}				% Do not reserve whole page for the cover
 \clearscrheadfoot						% Clear header and footer to provide space for customized content
 
 \rehead[]{Data Science with R}
-\rohead[]{Exercise 6}
+\rohead[]{Exercise 7}
 \cehead[]{\today}
 \cohead[]{\today}
-\lehead[]{Exercise 6}
+\lehead[]{Exercise 7}
 \lohead[]{Data Science with R}
 
 \lefoot[]{\oldstylenums{\pagemark}}
@@ -340,69 +340,53 @@ theme_set(theme_bw(base_size = 8))
 
 \section*{Supplement 1}
 
-We have seen the main data types of R, i.e. logical values, integers, doubles, and characters. R has some other types that build up on top of these. For instance, R represents dates as the number of days since 1907-01-01 and datetimes as the number of seconds since then. For the corona data we will only work with dates to keep it simple and thus drop any information about the daytime. It is possible to create dates either from numeric values or from strings. The default time zone is UTC.
+One nice aspect about using a programming language for analyzing data is that the script is at the same time documentation about what you have done. However, it is only a valuable documentation if it is readable for other humans and your future you. To keep a script readable there are some easy rules to follow (and in the future I will refuse to help if you do not follow these rules. I'm a biologist/data analyst, not a cryptologist ;-) ).
 
-<<>>=
-tomorrow <- as.Date(1, origin = "2020-03-27")
-newyear <- as.Date("2020-01-01")
-as.integer(tomorrow)
-@
+\begin{itemize}
+	\item Packages are loaded at the beginning of a script, always! It is the very first thing you have to do. There is no valid reason to load packages somewhere half way. This makes it directly obvious which dependencies your script has. Other R scripts that belong to your project are sourced directly after these imports.
+	\item A single line never exceeds 80 characters. If you have such a line, break it in multiple lines. As a help: You can add a vertical line in RStudio that indicates when you exceed 80 characters. Go to \texttt{Tools > Global Options... > Code > Display} and activate \texttt{Show margin} with margin column of \texttt{80}. Function calls can easily be broken over several lines.
+	<<eval=FALSE, tidy=FALSE>>=
+	function(
+	    argument1 = parameter,
+	    argument2 = other_parameter,
+	    argument3 = NULL
+	)
+	@
+	\item Add comments to your code. R ignores everything in a line behind a \texttt{\#}. Add comments in front of a block of code to explain what the script will do. Short and precise but with enough details to be understandable. You can also use comments to comment-out some code if you are trying around with different ways of achieving your task.
+	\item Use blank lines to visually structure your code. Lines do not cost anything but hugely improves readability.
+	\item Use meaningful variable names. \texttt{a} is a very short name for a variable but doesn't give the reader any idea what kind of data the variable holds.
+	\item Put spaces around assignment operators and equal signs in argument specification. Don't break this rule to follow the second point!
+	<<eval=FALSE>>=
+	# Bad.
+	mean(x=1:20,na.rm=TRUE,trim=.1)
+	
+	# Good.
+	mean(1:20, na.rm = TRUE, trim = .1)
+	@
+\end{itemize}
 
-So since 1970-01-01 18349 days passed by. Cause dates are represented as integers we can do math with them:
-
-<<>>=
-tomorrow - newyear
-@
-
-R automatically considers leap years and even leap seconds. There are many useful functions to work with dates, e.g.
-
-<<>>=
-weekdays(newyear) # Language is system dependend.
-@
-
-Unfortunately, dates are often not in the standard format given by \texttt{YYYY-mm-dd}. But we can specify the format for R using special placeholders.
-
-<<>>=
-my_date <- "01/26/2015 07:24pm"
-as.Date(my_date, format = "%m/%d/%Y") # Time is ignored.
-@
-
-There are many letters with special meanings for declaring the proper format. Check the help page for \texttt{strptime}.
+Every programming language has style guides which you should follow. One popular one for R can be found at \url{https://style.tidyverse.org/}. You do not need the packages mentioned on the first page. Keep it simple ;-)
 
 
 \section*{Exercise 1}
 
-In this exercise we will start to develop our corona project. Make sure to create a project folder called \texttt{corona} with a file \texttt{analysis.R} and a subfolder \texttt{data} as mentioned on the last exercise sheet. In addition create subfolders \texttt{output} and \texttt{src} and subfolders in \texttt{data} called \texttt{raw} and \texttt{processed}. The folder structure should look like the following. Put the data for daily reports in the \texttt{raw} folder. The project folder should look like this:
+For the following exercises you have to modify the \texttt{analysis.R} file. Make sure to consider the above rules. Also make sure to keep everything in the correct order. When starting with a fresh R session everything you should have to do is to press \texttt{Source} on the upper right. This runs the complete script from top to bottom.
 
-\dirtree{%
-		.1 corona.
-		.2 data.
-		.3 raw.
-		.4 01-22-2020.csv.
-		.4 01-23-2020.csv.
-		.4 \vdots .
-		.3 processed.
-		.2 output.
-		.2 src.
-		.2 analysis.R.
-	}
-
-Now, we can start to work on our project. The code for the following should go to the \texttt{analysis.R} file.
-
-For the following exercises make sure to always use relative paths. The root is always your top-level project folder.
+We will only analyze the data for whole countries, not for single regions. So we have to sum the data of all regions for one country. Also we have to modify the date of the last update as this date might differ between different regions of the same country. We will use the latest date for any of the regions of one country as a representative date for the whole country.
 
 \begin{enumerate}[label=(\alph*)]
-	\item For now we will work with a single date. Import the data for March 18 into R. Make sure to not convert all strings to factors. Save the data to a variable called \texttt{data\_corona}.
-	\item Have a look on the data. Most columns should be clear. I guess longitude and latitude are the coordinates for presenting the numbers on a world map (but I don't know exactly).
-	\item Convert the datetimes in \texttt{Last.Update} to dates using \texttt{as.Date}.
-	\item Save the data frame as \texttt{processed\_data.csv} in the \texttt{processed} folder. Look on the help page for \texttt{write.csv} and set the proper argument accordingly to omit row names. Save it also as an excel file for your favorite journal.
+	\item First, we have to sum up the cases of all regions of one country. Use the function \texttt{aggregate} to sum up the number of confirmed cases, deaths, and recovered (look in the examples on the help page for \texttt{aggregate} to see how you can use several columns). Group the data by the country only. Store the result in a variable called \texttt{sum\_country}.
+	\item Second, we have to determine the date of the last update for one country. On the last sheet we have converted the respective column to dates, so we can do math with them and apply, for instance, functions like \texttt{max} to them. Use \texttt{aggregate} to determine the latest date for each country. Again, group by country only. Store the result in a variable called \texttt{update\_country}.
+	\item Merge the two new data frames using \texttt{merge}. Since the key column has the same name in both data frames you do not have to specify it.
+	\item Save the result in a CSV file as before.
+	\item Find out how many and which countries had more than 1000 confirmed cases. Hint: You can use \texttt{nrow} to determine the number of rows of a data frame. Why would \texttt{length} not work? That does \texttt{length} return?
 \end{enumerate}
 
 
 \section*{*Exercise 2}
 
 \emph{This exercise is for the upcoming lecture to prepare you for the content or to sensibilize you for a certain aspect.}\\
-Sometimes we have more data then we can deal with or that we need to answer our specific question. In this project for instance we have data for different regions in one country. It is always a trade-off between how deeply we want to analyze our data and how complex the project will be. For this project for instance we will not consider each region separately but look at whole countries and we will ignore daytimes for the updates and only look at the date. This makes the analysis easier without loosing too much information.
+Think about some nice graphics that might be informative. Consider that for now we only read in data from two dates and we will not read in more by hand. So we can not show any temporal trends.
 
 
 \end{document}

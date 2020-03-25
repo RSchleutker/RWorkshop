@@ -1,0 +1,440 @@
+\documentclass[10pt]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage[utf8]{inputenc}				% Unicode transformation format für Input
+\usepackage[T1]{fontenc}				% Zeichensatzkodierung
+\usepackage{lmodern}
+\usepackage{upgreek}					% Providing non-emphasized greek letters
+\usepackage{textcomp}					% Providing special characters 
+%\usepackage[english]{babel}				% Setting 'english' as the documents language
+\usepackage{csquotes}
+
+\usepackage{ulem}
+
+\usepackage{fontspec}
+\usepackage{fontawesome}
+
+\metroset{block=fill}
+
+\usepackage{dirtree}
+
+\usepackage{listings}
+
+\title{Data Science with R}
+\subtitle{Part VII: Working with Data frame}
+% \date{\today}
+\date{April 3, 2020}
+\author{Raphael Schleutker}
+\institute{\textit{Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program.}
+\hfill --- Linus Torvalds (Initiator of Linux)}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\usepackage{hyperref}
+
+\begin{document}
+
+%!Rnw weave = knitr
+%\SweaveOpts{concordance=TRUE}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+options(formatR.arrow = TRUE, width = 50, scipen=999)
+opts_chunk$set(echo = TRUE,
+               message = FALSE,
+               warning = FALSE,
+               fig.path = 'figures/graphics-',
+               cache.path = 'cache/graphics-',
+               fig.align = 'center',
+               dev = 'pdf',
+               fig.show = 'hold',
+               par = FALSE,
+               cache = FALSE,
+               size = 'footnotesize',
+               comment = '#')
+
+opts_knit$set(self.contained=FALSE)
+
+knit_hooks$set(par = function(before, options, envir) {
+  if (before && options$fig.show!='none') {
+    par(mar = c(4,4,.1,.1),
+        cex.lab = .95,
+        cex.axis = .9,
+        mgp = c(2,.7,0),
+        tcl = -.3)
+  }
+}, crop=hook_pdfcrop)
+
+Sys.setenv(LANG = "en")
+@
+
+<<figure_settings, echo=FALSE>>=
+
+@
+
+
+
+% *****************************************************************************
+% TITLEPAGE
+% *****************************************************************************
+
+\maketitle
+
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+
+\begin{frame}[fragile]{General info}
+
+	Starting with this lecture I will successively decrease the extent of explanations of basic principles. I expect that you have already a little background: You know how to use functions and how to use the help system plus you know the data structures in R.
+	
+	When you recap the lectures you will more and more have to read the help pages for the used functions and you will have to run the examples on your own to fully understand them (and yes, this will take some time every now and then).
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% Splitting data frames
+% *****************************************************************************
+
+\section{Splitting data frames}
+% *****************************************************************************
+
+\begin{frame}[fragile]{Splitting data frames}
+
+	We have already seen how we can split data frames using \texttt{split}. It takes a data frame (but also a vector, for instance) and a variable of groups and returns a list each element of which is one of the resulting groups. Since we are using the same groups for merging the data frames it makes sense to store it in a separate variable.
+	
+	<<>>=
+	grouping <- iris$Species
+	split_iris <- split(iris, grouping)
+	@
+	
+	Please note, that the second argument does not have to be related to the first argument. We could split \texttt{iris} also by a completely different grouping variable of the same length.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Splitting data frames}
+
+	The result of this operation is a list of data frames, each containing the data for one species.
+	
+	<<>>=
+	str(split_iris, max.level = 1)
+	@
+	
+	We could no work on these data frames separately.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Splitting data frames}
+
+	\texttt{unsplit} merges the data frames. We have to provide the same grouping as for splitting.
+	
+	<<>>=
+	merged_iris <- unsplit(split_iris, grouping)
+	str(merged_iris)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Splitting data frames}
+
+	We can also provide a list of grouping variables. In this case data frames for each combination will be generated.
+	
+	<<>>=
+	grouping <- CO2[c("Type", "Treatment")] # Data frames are lists
+	split_co2 <- split(CO2, grouping)
+	merged_co2 <- unsplit(split_co2, grouping)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Splitting data frames}
+
+	Sometimes, we'd like to computer some values for grouped data. We could do so using the list of data frames produced by \texttt{split} but this is very inconvenient. Instead we can use \texttt{aggregate}.
+	
+	<<>>=
+	aggregate(iris[-5], by = iris[5], FUN = mean)
+	@
+	
+	The function takes an R object like a vector, list of vectors or a data frame, groups it by its second argument, and applies the function to each group.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+\begin{frame}[fragile]{Splitting data frames}
+
+	A convenient way to express what the grouping variable is, is given by the formula interface.
+	
+	<<>>=
+	aggregate(Sepal.Length ~ Species, data = iris, FUN = mean)
+	@
+	
+	The formula interface was originally a way to specify the relationship between dependent and independent variables in linear models but is nowadays used for many things especially when working with data frames.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% Combining data frames
+% *****************************************************************************
+
+\section{Combining data frames}
+% *****************************************************************************
+
+\begin{frame}[fragile]{Combining data frames}
+
+	When working with real data e.g. from files it often occurs that the data is split among several files. For instance, the data for the number of corona infections is  split among many files, one for each day. In R however, we'd like to have a single data frame with which we can work.
+	
+	<<>>=
+	data_20200317 <- read.csv("./data/03-17-2020.csv", stringsAsFactors = FALSE)
+	data_20200318 <- read.csv("./data/03-18-2020.csv", stringsAsFactors = FALSE)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+
+	When both data frames have a compatible structure (same number of columns in the same order) we can combine them row-wise using \texttt{rbind}.
+	
+	<<>>=
+	data_full <- rbind(data_20200317, data_20200318)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+
+	When both data frames have a compatible structure (same number of columns in the same order) we can combine them row-wise using \texttt{rbind}.
+	
+	<<>>=
+	str(data_20200317, max.level = 0)
+	str(data_20200318, max.level = 0)
+	str(data_full, max.level = 0)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+
+	A similar function is \texttt{cbind}, which combines data frames column-wise. In this case, both data frames have to have the same number of rows. Also, we have to make sure that the ordering in both data frames is the same.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+
+	We can also combine two data frames by a key column. Let us assume we are interested only in some europoean countries.
+	
+	<<>>=
+	eu_countries <- subset(
+		data_full,
+		Country.Region %in% c("Germany", "Italy", "Norway", "Spain"),
+		select = 2:6
+	)
+	
+	str(eu_countries)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+
+	We also have another data frame with some general information about each country like total population.
+	
+	<<>>=
+	population <- data.frame(
+		Country = c("Germany", "Italy", "Norway", "Spain"),
+		Population = c(83149300, 60317546, 5367580, 46733038)
+	)
+	
+	population
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+
+	We can add this information to our first data frame by using the country as a key.
+	
+	<<>>=
+	data_with_pop <- merge(
+		eu_countries,
+		population,
+		by.x = "Country.Region",
+		by.y = "Country"
+	)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Combining data frames}
+	
+	<<>>=
+	data_with_pop
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% Constructing environments from data frames
+% *****************************************************************************
+
+\section{Constructing environments from data frames}
+% *****************************************************************************
+
+\begin{frame}[fragile]{Constructing environments from data frames}
+
+	When working with data frams we will often refer to columns of that data frame by name. This is a bit annoying cause we always have to add the name of the data frame in front of it.
+	
+	<<>>=
+	eu_countries$Confirmed
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Constructing environments from data frames}
+
+	Fortunately, R provides two functions that allow us to construct an environment from a data frame or a list. The first function is called \texttt{with}. It takes the data frame as the first argument and some code as the second argument. We can group that code by curly braces to allow several lines. The effect is that we can refer to columns in the data frame like variables.
+	
+	<<>>=
+	with(
+	    eu_countries,
+	    {
+	    	Confirmed / sum(Confirmed) # Will not be returned.
+	        Deaths / Confirmed # Will be returned.
+	    }
+	)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Constructing environments from data frames}
+	
+	The return value of the function is the result of the last \emph{line} in the code block. However, we can use previous lines of code to calculate intermediate results. We can assign variables and use them within that code block but they will not be exported.
+	
+	Of course we can store the result of \texttt{with} in a variable.
+	
+	<<>>=
+	recovery_rate <- with(eu_countries, Recovered / Confirmed)
+	recovery_rate
+	@
+	
+	For one-liners we can omit the curly braces.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Constructing environments from data frames}
+	
+	A similiar function is \texttt{within}. It also constructs an environment from a list or data frame and evaluates the code in that environment. However it creates a copy of the original data frame and attaches newly created variables. The return value is than that modified copy of the original list / data frame.
+	
+	<<>>=
+	eu_countries <- within(eu_countries, death_rate <- Deaths / Confirmed)
+	str(eu_countries)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Constructing environments from data frames}
+	
+	Both functions can be very handy but we should not put to much code in the expression block as this soon becomes confusing.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+
+\end{document}
