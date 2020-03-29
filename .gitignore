@@ -9,3 +9,8 @@
 *.vrb
 *.toc
 *.out
+*.gz
+
+.Rhistory
+
+*.Rproj

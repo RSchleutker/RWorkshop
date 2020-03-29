@@ -1,0 +1,822 @@
+\documentclass[9pt, aspectratio=169]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage[utf8]{inputenc}				% Unicode transformation format für Input
+\usepackage[T1]{fontenc}				% Zeichensatzkodierung
+\usepackage{lmodern}
+\usepackage{upgreek}					% Providing non-emphasized greek letters
+\usepackage{textcomp}					% Providing special characters 
+\usepackage[english]{babel}				% Setting 'english' as the documents language
+\usepackage{csquotes}
+
+\usepackage{ulem}
+
+\usepackage{fontspec}
+\usepackage{fontawesome}
+
+\metroset{block=fill}
+
+\usepackage{dirtree}
+
+\usepackage{listings}
+
+\title{Data Science with R}
+\subtitle{Part VIII: Graphics}
+% \date{\today}
+\date{}
+\author{Raphael Schleutker}
+\institute{\textit{The essential test of design is how well it assists the understanding of the content, not how stylish it is.}
+\hfill --- Edward Tufte}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\usepackage{hyperref}
+
+\begin{document}
+
+%!Rnw weave = knitr
+%\SweaveOpts{concordance=TRUE}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+options(formatR.arrow = TRUE, width = 50, scipen=999)
+opts_chunk$set(echo = TRUE,
+               message = FALSE,
+               warning = FALSE,
+               fig.path = 'figures/graphics-',
+               cache.path = 'cache/graphics-',
+               fig.align = 'center',
+               dev = 'pdf',
+               fig.show = 'hold',
+               par = FALSE,
+               cache = FALSE,
+               size = 'footnotesize',
+               comment = '#')
+
+opts_knit$set(self.contained=FALSE, global.par = TRUE)
+
+Sys.setenv(LANG = "en")
+@
+
+<<include=FALSE>>=
+orig_pars <- par(no.readonly = TRUE)
+@
+
+
+
+% *****************************************************************************
+% TITLEPAGE
+% *****************************************************************************
+
+\maketitle
+
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+
+
+\begin{frame}[fragile]{General info}
+
+	R has two graphics systems: The traditional system provided by the \texttt{graphics} package and grid graphics provided by the \texttt{grid} package that is, for instance, used by \texttt{lattice} and \texttt{ggplot2}. Today we will focus on traditional graphics.
+	
+	We will first see how graphics are composed and later see some high-level functions.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% Basics
+% *****************************************************************************
+
+\section{Basics}
+% *****************************************************************************
+
+\begin{frame}[fragile]{Basics}
+
+	For a proper understanding of traditional graphics we have to know that graphics functions usually do not return a value. If at all they return the plotted data invisibly. Instead the graphical output is redirected to something that R calls devices.
+	
+	Such a device can be the screen (default). In this case a window is opened to which the graphical output goes. But a device can also be a file like PDF, PNG, or TIFF.
+	
+	When we open, for instance, a PDF device, all the graphical output of our graphics functions goes to that device (the file). Therefor we do not see the result on screen.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Basics}
+
+	For the beginning we will stay with the default device. This allows us to see the output directly on the screen.
+	
+	When producing a new plot the first function to call is \texttt{plot.new}. If we have already produced a plot, this causes completion of that plot and creates a new plot. That plot only consists of an empty canvas.
+	
+	This canvas is divided in two (yet invisible) regions:
+	
+	\begin{itemize}
+		\item The plotting region, in which the actual plotted data appears.
+		\item The margin region, in which ticks and axis labels appear.
+	\end{itemize}
+	
+	<<echo=FALSE, fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	par(mar = c(5.1, 4.1, 4.1, 4.1))	
+	plot.new()
+	plot.window(xlim = c(0, 1), ylim = c(0, 1))
+	
+	box()	
+	
+	text(.5, .5, label = "Plotting region")
+	mtext("Margin region", side = 1, line = 2)
+	mtext("Margin region", side = 2, line = 2)
+	mtext("Margin region", side = 3, line = 2)
+	mtext("Margin region", side = 4, line = 2)
+	
+	par(mar = c(5.1, 4.1, 4.1, 2.1))	
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Basics}
+
+	Initially, this plot lacks any coordinate system. We have to set it up using \texttt{plot.window}, which takes the limits for the x and y-axis and if the axis should be log-scaled. This allows us to put content in the next step cause now R knows were to place that data on the canvas. For instance we can add a grid for a better orientation.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot.new()
+	plot.window(xlim = c(0,1), ylim = c(0,1))
+	
+	grid() # Draw grid in plotting region.
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Basics}
+	
+	R has many low-level graphical functions. We can add, for example, points for the sepal length and width of the iris dataset.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot.new()
+	plot.window(xlim = c(4, 8), ylim = c(2,5))
+	
+	grid() # Draw grid in plotting region.
+	points(iris$Sepal.Length, iris$Sepal.Width, pch = 16, col = iris$Species)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Basics}
+	
+	There are more low-level functions like \texttt{points}, e.g. \texttt{lines}, \texttt{polygon}, and \texttt{rect}. All of them take parameters that further specify their look.
+	
+	For instance, the \texttt{col} argument of \texttt{points} takes a vector the same length as the x- and y-coordinates. The first element is matched with the first pair of coordinates and the point colored accordingly. The \texttt{pch} argument specifies the plotting character, i.e. the shape of the point. \texttt{16} means filled circle.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Basics}
+	
+	We can now proceed and add common components of a plot.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot.new()
+	plot.window(xlim = c(4, 8), ylim = c(2,5))
+	
+	grid() # Draw grid in plotting region.
+	points(iris$Sepal.Length, iris$Sepal.Width, pch = 16, col = iris$Species)
+	axis(1) # x-axis
+	axis(2) # y-axis
+	box() # Border around plotting region.
+	title(xlab = "Sepal Length", ylab = "Sepal Width", main = "Iris Dataset")
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Basics}
+	
+	Using such low-level functions gives a very good idea about how traditional graphics are composed in R and using them is a very mighty tool to build beautiful plots.
+	
+	However, working with low-level functions is tedious. Therefor, R has many functions that bundle all of the previous things.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+% *****************************************************************************
+% High-level functions
+% *****************************************************************************
+
+\section{High-level functions}
+% *****************************************************************************
+
+\begin{frame}[fragile]{High-level functions}
+
+	The previous plot can easily be created without calling all the low-level functions on your own.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot(
+	    iris$Sepal.Length,
+	    iris$Sepal.Width,
+	    col = iris$Species,
+	    xlab = "Sepal Length", ylab = "Sepal Width",
+	    main = "Iris Dataset",
+	    pch = 16
+	)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	The \texttt{plot} function detects that it gets two numeric arguments and interprets them as coordinates. By default, it plots points. But we can also take another plotting type.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	The previous plot can easily be created without calling all the low-level functions on your own.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot(1:10, runif(10), type = "h")
+	@
+	
+	The generic axis labels are usually not very useful.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	By default, the plot lacks a grid. We can add a grid with \texttt{grid()}, of course, but this puts the grid over the plot.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot(
+	    1:10,
+	    runif(10),
+	    type = "l",
+	    panel.first = grid(lty = "solid") # Calls grid before plot is generated.
+	)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	There are also even more abstract high-level functions like \texttt{curve}.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	f <- function(x) x^2
+	
+	curve(f, -3, 3, panel.first = grid())
+	@
+	
+	\texttt{curve} takes a function and creates a specified number of evenly spaced values for the definition interval. It then calls the function with these values and uses \texttt{lines} to create the function plot.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	This can also be done manually.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	x <- seq(-3, 3, length.out = 101) # Create 101 evenly spaced values.
+	y <- f(x) # Create the function values.
+	
+	plot(x, y, type = "l", panel.first = grid())
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	The graphics functions often work with the formula interface.
+	
+	<<>>=
+	par(mar = c(5.1, 4.1, 1.1, 2.1))
+	@
+	
+	<<fig.height=4, fig.width=4, out.height="2in", out.width="2in">>=
+	boxplot(Sepal.Length ~ Species, data = iris)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{High-level functions}
+
+	High-level functions create new plots, i.e. they call \texttt{plot.new}. Sometime, they take the argument \texttt{add} that can be set to \texttt{TRUE}. Then the output is added to the existing plot. Low-level functions are added by default.
+	
+	<<fig.height=4, fig.width=4, out.height="2in", out.width="2in">>=
+	x <- rep(c(1, 2, 3), each = 50) + runif(150, -0.4, 0.4)
+	boxplot(Sepal.Length ~ Species, data = iris)
+	points(x, iris$Sepal.Length, pch = 16)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+% *****************************************************************************
+% Colors
+% *****************************************************************************
+
+\section{Colors}
+% *****************************************************************************
+
+
+<<include=FALSE>>=
+par(mar = c(5.1, 4.1, 0.1, 1.1))
+@
+
+
+\begin{frame}[fragile]{Colors}
+
+	R has a default color palette that we can view by using the \texttt{palette} function.
+	
+	<<>>=
+	palette()
+	@
+	
+	These colors are not very nice even though they will improve with the release of R 4.0.0.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+
+	When using colors in a plot R uses the value handed over to the \texttt{col} argument. If it is a string, it will use different colors for different strings. If it is numeric, it will use the value as an index for the different colors, i.e. 3 corresponds to \texttt{green3} in the above palette.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	We can modify the palette by giving the \texttt{palette} function a character string with either color names or hexadecimal representations of colors.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	palette(c("black", "blue", "magenta"))
+	palette()
+	
+	plot(Sepal.Width ~ Sepal.Length, data = iris, col = Species, pch = 16)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	Alternatively, we can hand over the colors for the plot manually. In this case, R will not use the standard palette by uses the colors directly.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot(
+	    Sepal.Width ~ Sepal.Length, data = iris,
+	    col = rep(c("red", "blue", "green"), each = 50),
+	    pch = 16
+	)
+	@
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	At the time of writing, R knows 657 different colors by name. You can watch them using \texttt{colors()}.
+	
+	Setting the palette to nice colors is fine for categorical values but sometimes we have numerical values and want to color them according to their values.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	For this, R has two functions called \texttt{colorRamp} and \texttt{colorRampPalette}. Both take a character vector with colors and return a \emph{function}, that interpolates colors (yes, functions can return other functions). The function returned by \texttt{colorRampPalette} takes an integer and returns the same amount of colors interpolated from the given ones. The function returned by \texttt{colorRamp} takes a value between 0 and 1 and returns the according color value between the specified ones.
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	For example, we want to create shades of gray between white and black.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	greyRamp <- colorRampPalette(c("white", "black")) # Create the function.
+	greyRamp(10) # Call the function returned by colorRampPalette.
+	
+	plot(1:10, pch = 16, col = greyRamp(10))
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	In the above example, we specified the color for each point by position, i.e. the first point becomes white and the last one black. If we want to color a point according to a value, we have to use \texttt{colorRamp} but the usage is slightly more difficult.
+	
+	<<>>=
+	greyRamp <- colorRamp(c("white", "black"))
+	greyRamp(0.5)
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	The function returned by \texttt{colorRamp} takes a value between 0 and 1 and returnes RGB values between 0 and 255. For 0.5 these are the RGB values for a grey in the center between white and black. \texttt{rgb} converts these values to a string that we can use.
+	
+	<<>>=
+	rgb(greyRamp(0.5), maxColorValue = 255)
+	@
+	
+	Let's see how we can use this for a plot.
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	plot(
+	  Sepal.Width ~ Sepal.Length, data = iris,
+	  col = rgb(
+	    greyRamp(with(iris, Petal.Length / max(Petal.Length))),
+	    maxColorValue = 255
+	  ),
+	  pch = 16
+	)
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	We can also provide several colors and interpolate color palettes from them. Some nice initial colors are provided by the package \texttt{RColorBrewer}.
+	
+	<<>>=
+	library(RColorBrewer)
+	
+	brewer.pal(5, "Spectral")
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	We can also provide several colors and interpolate color palettes from them. Some nice initial colors are provided by the package \texttt{RColorBrewer}.
+	
+	<<>>=
+	library(RColorBrewer)
+	
+	brewer.pal(5, "Spectral")
+	spectralRamp <- colorRamp(brewer.pal(5, "Spectral"))
+	@
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Colors}
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	normalized_murder <- with(USArrests, Murder / max(Murder))
+	
+	plot(
+	  Assault ~ Rape, data = USArrests,
+	  col = rgb(spectralRamp(normalized_murder), maxColorValue = 255),
+	  pch = 16
+	)
+	@
+	
+	Apparently, the number of rapes, assaults and murders correlate with each other.
+	
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+
+% *****************************************************************************
+% Graphical parameters
+% *****************************************************************************
+
+\section{Graphical parameters}
+% *****************************************************************************
+
+<<include=FALSE>>=
+par(orig_pars)
+@
+
+\begin{frame}[fragile]{Graphical parameters}
+
+	R has a global list of graphical parameters that defines how a plot looks. For example, we can define the size of the margins, the size of text, the orientation of tick labels, etc. The interface to these parameters is provided by \texttt{par}. When giving a string with the name of a graphical parameter, it returns the current value. But we can also use it to modify these values.
+	
+	<<>>=
+	par("mar") # Size of margins in lines of text.
+	par(mar = c(5.1, 4.1, 1.1, 1.1))
+	par("mar")	
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Graphical parameters}
+
+	There are dozens of different parameters that we can modify. Read the help page for \texttt{par} to get an idea. In the following we will see some common ones.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	palette(brewer.pal(3, "Set1")) # Select a palette from RColorBrewer
+	par(las = 1) # Make all tick labels horizontal
+	
+	plot(Petal.Length ~ Petal.Width, data = iris, col = Species, pch = 16)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Graphical parameters}
+
+	Using \texttt{par} to set graphical parameters affects all plots. For many parameters it is possible to provide them for the plotting function (this is, what the \texttt{...} argument is used for). This only affects the current plot.
+	
+	<<fig.height=3, fig.width=4, out.height="1.5in", out.width="2in">>=
+	par(las = 0) # Tick labels parallel to axis.
+	
+	plot(
+	  Petal.Length ~ Petal.Width, data = iris,
+	  col = Species,
+	  pch = 16,
+	  las = 1
+	)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Graphical parameters}
+
+	A very useful parameter is \texttt{mfrow}, which allows us to create several plots on one page.
+	
+	<<fig.height=3, fig.width=6, out.height="1.5in", out.width="3in">>=
+	par(las = 1, mfrow = c(1, 2)) # 1 row and 2 columns
+	
+	plot(Petal.Length ~ Petal.Width, data = iris, col = Species, pch = 16)
+	plot(Sepal.Length ~ Sepal.Width, data = iris, col = Species, pch = 16)
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Graphical parameters}
+
+	Please note that the page is always split equally and each subplot is a complete plot with margin and plotting regions. Therefor, it is not possible to create facets as you may know them from ggplot2.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+
+% *****************************************************************************
+% Devices
+% *****************************************************************************
+
+\section{Devices}
+% *****************************************************************************
+
+
+<<include=FALSE>>=
+par(orig_pars)
+@
+
+
+\begin{frame}[fragile]{Devices}
+
+	By default R outputs the graphical output to a window, in which we can then see the result. Usually, we want to save the plot as a file for later use. In this case we have to open a new device that is not a window but a file. For instance:
+	
+	<<>>=
+	pdf("./output/iris.pdf", pointsize = 9, width = 100/25, height = 70 / 25)
+	
+	par(mar = c(5.1, 4.1, 2.1, 2.1))
+	
+	plot(
+	  Sepal.Length ~ Sepal.Width,
+	  data = iris,
+	  col = Species,
+	  pch = 16, las = 1
+	)
+	
+	dev.off() # IMPORTANT! Close device.
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Devices}
+
+	Since the graphical output is sent to the file we do not see it in the window.
+	
+	Plots stored as PDFs are stored as vector graphics. When saving them as raster graphics we can also provide the resolution.
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Devices}
+	
+	<<>>=
+	tiff(
+	  "./output/iris.tiff",
+	  pointsize = 9,
+	  width = 100, height = 70, units = "mm",
+	  res = 300  # 300 dpi
+	)
+	
+	par(mar = c(5.1, 4.1, 2.1, 2.1))
+	
+	plot(
+	  Sepal.Length ~ Sepal.Width,
+	  data = iris,
+	  col = Species,
+	  pch = 16, las = 1
+	)
+	
+	dev.off() # IMPORTANT! Close device.
+	@
+
+
+\end{frame}
+
+
+% =============================================================================
+
+
+\begin{frame}[fragile]{Devices}
+
+	How can you make sure that the text in your plots always appear as the same size in your reports?
+	
+	\begin{enumerate}
+		\item Determine the final width and height of your figure on the paper in mm.
+		\item Open a graphics device and specify your measured width and height. Set the pointsize to 8 or 9.
+		\item Specify the dpi as required by the journal.
+	\end{enumerate}
+	
+	Never increase width or height to get more pixels in your final file. This makes the text appearing smaller and you would have to adjust that again.
+
+\end{frame}
+
+
+% =============================================================================
+
+
+
+
+\end{document}

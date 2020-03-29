@@ -1,4 +1,4 @@
-\documentclass[10pt]{beamer}
+\documentclass[9pt, aspectratio=169]{beamer}
 
 \usetheme[progressbar=frametitle]{metropolis}
 \usepackage{appendixnumberbeamer}
@@ -31,10 +31,10 @@
 \title{Data Science with R}
 \subtitle{Part VII: Working with Data frame}
 % \date{\today}
-\date{April 3, 2020}
+\date{}
 \author{Raphael Schleutker}
-\institute{\textit{Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program.}
-\hfill --- Linus Torvalds (Initiator of Linux)}
+\institute{\textit{Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program.}\\
+--- Linus Torvalds (Initiator of Linux)}
 % \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
 
 \usepackage{hyperref}
