@@ -30,10 +30,10 @@ numbers=noenddot]{scrartcl}				% Do not reserve whole page for the cover
 \clearscrheadfoot						% Clear header and footer to provide space for customized content
 
 \rehead[]{Data Science with R}
-\rohead[]{Exercise 7}
+\rohead[]{Solutions 6}
 \cehead[]{\today}
 \cohead[]{\today}
-\lehead[]{Exercise 7}
+\lehead[]{Solutions 6}
 \lohead[]{Data Science with R}
 
 \lefoot[]{\oldstylenums{\pagemark}}
@@ -63,8 +63,6 @@ line/.style={line width=.2mm, draw=black!70}}
 \usepackage{wrapfig}
 
 \usepackage{seqsplit}
-
-\usepackage{dirtree}
 
 
 % Extra packages for language / characters, language settings --------------------
@@ -311,9 +309,9 @@ opts_chunk$set(echo = TRUE,
                fig.align = 'center',
                dev = 'pdf',
                fig.show = 'hold',
-               par = FALSE,
+               global.par = TRUE,
                cache = FALSE,
-               size = 'small',
+               size = 'footnotesize',
                comment = '#')
 
 opts_knit$set(self.contained=FALSE)
@@ -335,58 +333,51 @@ Sys.setenv(LANG = "en")
 library(ggplot2)
 
 theme_set(theme_bw(base_size = 8))
+par(mar = c(5.1, 4.1, 4.1, 2.1))
 @
-
-
-\section*{Supplement 1}
-
-One nice aspect about using a programming language for analyzing data is that the script is at the same time documentation about what you have done. However, it is only a valuable documentation if it is readable for other humans and your future you. To keep a script readable there are some easy rules to follow (and in the future I will refuse to help if you do not follow these rules. I'm a biologist/data analyst, not a cryptologist ;-) ).
-
-\begin{itemize}
-	\item Packages are loaded at the beginning of a script, always! It is the very first thing you have to do. There is no valid reason to load packages somewhere half way. This makes it directly obvious which dependencies your script has. Other R scripts that belong to your project are sourced directly after these imports.
-	\item A single line never exceeds 80 characters. If you have such a line, break it in multiple lines. As a help: You can add a vertical line in RStudio that indicates when you exceed 80 characters. Go to \texttt{Tools > Global Options... > Code > Display} and activate \texttt{Show margin} with margin column of \texttt{80}. Function calls can easily be broken over several lines.
-	<<eval=FALSE, tidy=FALSE>>=
-	function(
-	    argument1 = parameter,
-	    argument2 = other_parameter,
-	    argument3 = NULL
-	)
-	@
-	\item Add comments to your code. R ignores everything in a line behind a \texttt{\#}. Add comments in front of a block of code to explain what the code in that block will do. Short and precise but with enough details to be understandable. It is much easier to understand a code and how it works if it is known what it should do. You can also use comments to comment-out some code if you are trying around with different ways of achieving your task. This is much better than having different versions of the same file.
-	\item Use blank lines to visually structure your code. Lines do not cost anything but hugely improves readability.
-	\item Use meaningful variable names. \texttt{a} is a very short name for a variable but doesn't give the reader any idea what kind of data the variable holds. It is not easy to find good names but it's worth the effort.
-	\item Put spaces around assignment operators and equal signs in argument specification. Don't break this rule to follow the second point!
-	<<eval=FALSE>>=
-	# Bad.
-	mean(x=1:20,na.rm=TRUE,trim=.1)
-	
-	# Good.
-	mean(1:20, na.rm = TRUE, trim = .1)
-	@
-\end{itemize}
-
-Every programming language has style guides which you should follow. One popular one for R can be found at \url{https://style.tidyverse.org/}. You do not need the packages mentioned on the first page. Keep it simple ;-)
-
 
 \section*{Exercise 1}
 
-For the following exercises you have to modify the \texttt{analysis.R} file. Make sure to consider the above rules. Also make sure to keep everything in the correct order. When starting with a fresh R session everything you should have to do is to press \texttt{Source} on the upper right. This runs the complete script from top to bottom.
-
-We will only analyze the data for whole countries, not for single regions. So we have to sum the data of all regions for one country. Also we have to modify the date of the last update as this date might differ between different regions of the same country. We will use the latest date for any of the regions of one country as a representative date for the whole country.
-
 \begin{enumerate}[label=(\alph*)]
-	\item First, we have to sum up the cases of all regions of one country. Use the function \texttt{aggregate} to sum up the number of confirmed cases, deaths, and recovered (look in the examples on the help page for \texttt{aggregate} to see how you can use several columns). Group the data by the country only. Store the result in a variable called \texttt{sum\_country}.
-	\item Second, we have to determine the date of the last update for one country. On the last sheet we have converted the respective column to dates, so we can do math with them and apply, for instance, functions like \texttt{max} to them. Use \texttt{aggregate} to determine the latest date for each country. Again, group by country only. Store the result in a variable called \texttt{update\_country}.
-	\item Merge the two new data frames using \texttt{merge}. Since the key column has the same name in both data frames you do not have to specify it.
-	\item Save the result in a CSV file as before.
-	\item Find out how many and which countries had more than 1000 confirmed cases. Hint: You can use \texttt{nrow} to determine the number of rows of a data frame. Why would \texttt{length} not work? What does \texttt{length} return?
+	\item The files are in standard csv format. This means that we can use \texttt{read.csv} to read in the data for March 18. We have to set \texttt{stringsAsFactors = FALSE}.
+	<<eval=FALSE>>=
+	data_corona <- read.csv(
+	    "./data/raw/03-18-2020.csv",
+	    stringsAsFactors = FALSE
+	)
+	@
+	Please note that we have used a relative file path here. We always assume that we are in the root directory of our project.
+	\item As usual you can use \texttt{str} and \texttt{head} to get an impression about the data.
+	\item With (b) we know that the format of the \texttt{Last.Update} column looks like \texttt{2020-03-18T12:13:09}. When we look on the help page for \texttt{strptime} we see that the year can be encoded with \texttt{\%Y}, a month consisting of two figures is \texttt{\%m} and the day of a month with two figures is \texttt{\%d}. So we can convert the column to dates as follows:
+	<<eval=FALSE>>=
+	data_corona$Last.Update <- as.Date(data_corona$Last.Update, "%Y-%m-%d")
+	@
+	We use the subsetting operator \texttt{\$} to select and overwrite the respective column with the result of the right-hand function call. Please note that we do not have to further specify anything after the day, i.e., \texttt{T12:13:09} is automatically ignored.
+	\item We can export the data frame as a CSV file with \texttt{write.csv}. For exporting to Excel files we have to use a third-party package like \texttt{open.xlsx}.
+	<<eval=FALSE>>=
+	library("open.xlsx")
+	
+	write.csv(data_corona, "./data/processed/processed_data.csv", row.names = FALSE)
+	write.xlsx(data_corona, "./data/processed/processed_data.xlsx")
+	@
 \end{enumerate}
 
+So your \texttt{analysis.R} file should look like below.
 
-\section*{*Exercise 2}
+<<eval=FALSE>>=
+library("open.xlsx")
 
-\emph{This exercise is for the upcoming lecture to prepare you for the content or to sensibilize you for a certain aspect.}\\
-Think about some nice graphics that might be informative. Consider that for now we only read in data from two dates and we will not read in more by hand. So we can not show any temporal trends.
+data_corona <- read.csv(
+    "./data/raw/03-18-2020.csv",
+    stringsAsFactors = FALSE
+)
+
+data_corona$Last.Update <- as.Date(data_corona$Last.Update, "%Y-%m-%d")
+
+write.csv(data_corona, "./data/processed/processed_data.csv", row.names = FALSE)
+write.xlsx(data_corona, "./data/processed/processed_data.xlsx")
+@
+
 
 
 \end{document}
