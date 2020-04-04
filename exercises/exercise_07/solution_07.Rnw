@@ -338,106 +338,35 @@ par(mar = c(5.1, 4.1, 4.1, 2.1))
 
 \section*{Exercise 1}
 
-Let us first create the three vectors.
-
-<<>>=
-x <- sample(100)
-y <- sample(100)
-z <- sample(letters, 100, replace = TRUE)
-@
-
-Now we can start to extract elements from \texttt{x} according to the exercises.
+Since the project is growing every week and the exercises become more and more inter-related I've put the code for the solution in the actual analysis file in the project folder. You can use that file for the solutions and as a check-point for your own analysis. I will just discus the code snippets here.
 
 \begin{enumerate}[label=(\alph*)]
-	\item We can extract every fifth value in two ways. Either by logical subsetting or by position.
-	<<>>=
-	x[c(TRUE, FALSE, FALSE, FALSE, FALSE)]
-	x[seq(1, 100, 5)]
+	\item Pleae note that I have renamed the data frame from \texttt{data\_corona} to \texttt{data\_20200318}. As described on the help page for \texttt{aggregate} we can apply the function to several columns by using \texttt{cbind}.
+	<<eval=FALSE>>=
+	sum_country <- aggregate(
+	  cbind(Confirmed, Deaths, Recovered) ~ Country.Region,
+	  data = data_20200318,
+	  sum
+	)
 	@
-	\item We have seen in the lecture that we can omit elements by using negative position values.
-	<<>>=
-	x[-30:-10] # Create a sequence of values from -30 to -10.
+	Here I use the formula interface for defining the columns that I want to use for grouping and the columns to which the functions shall be applied.
+	\item In the very same way we can determine the date of the latest update for each country. Since dates in R are integers we can use the function \texttt{max} to determine the latest date.
+	<<eval=FALSE>>=
+	update_country <- aggregate(
+	  Last.Update ~ Country.Region,
+	  data = data_20200318,
+	  max
+	)
 	@
-	\item The sequence is the cumulative sum of all values from 1 to 13. We can use this sequence to extract the elements from x.
-	<<>>=
-	cumsum(1:13)
-	x[cumsum(1:13)]
+	\item We can now easily merge both data frames. The easiest way is to use \texttt{merge}. It will automatically match the correct rows by the country column. Since both the respective column has the very same name in both data frames we do not have to specify it explicitly. However, we can do so in order to make the code easier understandable.
+	<<eval=FALSE>>=
+	data_20200318 <- merge(sum_country, update_country)
 	@
-	\item We have to use logical subsetting for this. The idea is to make a comparison, if \texttt{y} is smaller than \texttt{x}. Since such comparisons are done elementwise for two vectors we can use the resulting logical vector for answering the question.
-	<<>>=
-	x[y < x]
+	\item We can answer this question by first filtering out all rows with less than 1000 confirmed cases and then count the number of remaining rows. This works since for now we are only looking at data from a single date.
+	<<eval=FALSE>>=
+	nrow(subset(data_20200318, Confirmed >= 1000))
 	@
-	\item This is very much like the previous exercise. We have to create a logical vector. We can use \texttt{\%in\%} to check for every element in \texttt{z} if it is either \textbf{"c"}, \texttt{"r"}, or \texttt{"x"}.
-	<<>>=
-	x[z %in% c("c", "r", "x")]
-	@
-	\item Fort his exercise we have to use the \texttt{\&} (intersection) operator. We create two logical vectors (those from (d) and (e)) and connect them.
-	<<>>=
-	x[(y < x) & (z %in% c("c", "r", "x"))]
-	@
-	\item The same as in (f) but this time we have to use the \texttt{|} (union) operator.
-	<<>>=
-	x[(y < x) | (z %in% c("c", "r", "x"))]
-	@
-	\item The position of the largest element in \texttt{x} can be detected using \texttt{which.max}.
-	<<>>=
-	which.max(x)
-	@
+	This should yield the number \texttt{16}. Please note that \texttt{length} does not work here even though we would intuitively define the length of a data frame as the number of rows. But we have to remember here that a data frame is just a list. And the length of the list is the number of elements. Since a data frame holds one vector for each column \texttt{length} would return the number of columns.
 \end{enumerate}
-
-If you have trouble to comprehend the solutions I recommend that you dissect the solutions piece by piece. Take the expressions in the brackets and execute them alone. If they are assembled like in exercise (f) and (g) disassemble the expressions further. Also go through the lecture again and execute the examples. If you are not sure, what exactly happens, disassemble the examples. Try around yourself.
-
-
-\section*{Exercise 2}
-
-We can not extract single elements cause there is no meaningful data structure this data could take. For example, the elements in the iris data set are of different types, so we can not put them in a single vector.
-
-<<>>=
-iris[5,4]
-iris[4,5]
-@
-
-A data frame is also not possible. A data frame is rectangular. What happens to the diagonal elements in the fifth row + fifth column and fourth row + fourth column? A list would theoretically be possible but the ordering of the elements would not be defined. This is too ambiguous for being a reliable tool in programming.
-
-In the following we have two possibilities to extract the desired information: Either using brackets or using \texttt{subset}. I will show you both ways for the first two problems. I think that after exercise 1 the solutions are more or less self-explanatory so I will omit further explanations. For using brackets you have to remember to put the comma!
-
-\begin{enumerate}[label=(\alph*)]
-	\item
-	<<>>=
-	subset(USArrests, Murder >= 10)
-	USArrests[USArrests$Murder >= 10,]
-	@
-	\item
-	<<>>=
-	subset(USArrests, Rape >= 20 & Rape <= 40)
-	USArrests[USArrests$Rape >= 20 & USArrests$Rape <= 40,]
-	@
-	\item
-	<<>>=
-	subset(USArrests, Murder >= 10 & Rape >= 20 & Rape <= 40)
-	@
-	\item This time, we have to get a vector. We can create a data frame with the subset of data and directly subset it again (which looks a bit odd). Or we can use the \texttt{drop} argument from \texttt{subset}. Setting it to \texttt{TRUE} removes the surrounding data frame if a single column is selected.
-	<<>>=
-	subset(USArrests, Assault > 200)$UrbanPop
-	subset(USArrests, Assault > 200, select = UrbanPop, drop = TRUE)
-	USArrests[USArrests$Assault > 200,][[3]] # UrbanPop is the third column.
-	@
-	Another very nice way is to construct an environment, in which we can refer to the column names directly (we will see in Part VII how this exactly works).
-	<<>>=
-	with(USArrests, UrbanPop[Assault > 200])
-	@
-\end{enumerate}
-
-Bonus exercise: As explained the \texttt{order} function returns positions that arranges its argument in ascending order.
-
-<<>>=
-order(USArrests$Assault)
-@
-
-This basically means that the 34. element in the Assault column is the smallest value, the 11. element is the second smallest and so on. So we can take these values for reordering the whole data frame. Please note, that this creates an ordered copy of the original data frame. It does not order the existing data frame in place!
-
-<<>>=
-USArrests[order(USArrests$Assault),]
-@
 
 \end{document}
